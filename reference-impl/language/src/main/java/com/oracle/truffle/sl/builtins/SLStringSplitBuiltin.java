@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, 2022, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The Universal Permissive License (UPL), Version 1.0
@@ -38,41 +38,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.oracle.truffle.sl.test;
+package com.oracle.truffle.sl.builtins;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.oracle.truffle.api.dsl.Cached;
+import com.oracle.truffle.api.dsl.ImportStatic;
+import com.oracle.truffle.api.dsl.Specialization;
+import com.oracle.truffle.api.instrumentation.AllocationReporter;
+import com.oracle.truffle.api.interop.*;
+import com.oracle.truffle.api.library.CachedLibrary;
+import com.oracle.truffle.api.nodes.NodeInfo;
+import com.oracle.truffle.api.object.DynamicObjectLibrary;
+import com.oracle.truffle.api.strings.TruffleString;
+import com.oracle.truffle.sl.SLException;
+import com.oracle.truffle.sl.SLLanguage;
+import com.oracle.truffle.sl.runtime.SLContext;
+import com.oracle.truffle.sl.runtime.SLObject;
 
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Value;
-import org.junit.Ignore;
-import org.junit.Test;
 
-@Ignore
-public class SLValueSharingTest {
+@NodeInfo(shortName = "stringSplit")
+@ImportStatic(SLContext.class)
+public abstract class SLStringSplitBuiltin extends SLBuiltinNode {
 
-    public static class JavaObject {
-        public Object sharedField;
-    }
+    @Specialization
+    public SLObject splitSpace(Object obj,
+                                 @CachedLibrary(limit = "1") InteropLibrary objlib) {
+        if (obj instanceof TruffleString) {
+            String sub = ((TruffleString) obj).toJavaStringUncached();
+            String[] strings = sub.split(" ");
+            SLObject object = SLLanguage.get(this).createObject(null);
 
-    @Test
-    public void testImplicitValueSharing() {
-        JavaObject obj = new JavaObject();
-        Context.Builder b = Context.newBuilder().allowAllAccess(true);
-        try (Context c0 = b.build();
-                        Context c1 = b.build()) {
 
-            c0.eval("sl", "function test(obj) { obj.sharedField = new(); }");
-            c1.eval("sl", "function test(obj) { return obj.sharedField; }");
+            int i = 0;
+            for (String s : strings) {
+                try {
+                    objlib.writeMember(object, ""+(i++), s);
 
-            c0.getBindings("sl").getMember("test").execute(obj);
-            Value test1 = c1.getBindings("sl").getMember("test");
+                } catch (UnsupportedMessageException | UnsupportedTypeException |
+                         UnknownIdentifierException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
-            Value v = test1.execute(obj);
-
-            assertTrue(v.hasMembers());
-            assertEquals(v, c1.asValue(obj.sharedField));
+            return object;
         }
-
+        throw new SLException("Not a string: cannot substring", this);
     }
 }

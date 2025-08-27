@@ -48,6 +48,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.oracle.truffle.sl.builtins.*;
 import org.graalvm.polyglot.Context;
 
 import com.oracle.truffle.api.CallTarget;
@@ -68,33 +69,6 @@ import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.strings.TruffleString;
 import com.oracle.truffle.sl.SLLanguage;
-import com.oracle.truffle.sl.builtins.SLAddToHostClassPathBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLBuiltinNode;
-import com.oracle.truffle.sl.builtins.SLDefineFunctionBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLEvalBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLExitBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLGetSizeBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLStringSubstringBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLHasSizeBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLHelloEqualsWorldBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLImportBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLInNativeImageBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLIsExecutableBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLIsInstanceBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLIsNullBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLJavaTypeBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLNanoTimeBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLNewObjectBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLPrintlnBuiltin;
-import com.oracle.truffle.sl.builtins.SLPrintlnBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLReadlnBuiltin;
-import com.oracle.truffle.sl.builtins.SLReadlnBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLRegisterShutdownHookBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLStackTraceBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLTypeOfBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLWrapPrimitiveBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLObjectHasPropertyBuiltinFactory;
-import com.oracle.truffle.sl.builtins.SLObjectDeletePropertyBuiltinFactory;
 
 
 /**
@@ -174,7 +148,6 @@ public final class SLContext {
      * {@link SLBuiltinNode builtin implementation classes}.
      */
     private void installBuiltins() {
-        installBuiltin(SLReadlnBuiltinFactory.getInstance());
         installBuiltin(SLPrintlnBuiltinFactory.getInstance());
         installBuiltin(SLNanoTimeBuiltinFactory.getInstance());
         installBuiltin(SLDefineFunctionBuiltinFactory.getInstance());
@@ -182,21 +155,12 @@ public final class SLContext {
         installBuiltin(SLHelloEqualsWorldBuiltinFactory.getInstance());
         installBuiltin(SLNewObjectBuiltinFactory.getInstance());
         installBuiltin(SLEvalBuiltinFactory.getInstance());
-        installBuiltin(SLImportBuiltinFactory.getInstance());
         installBuiltin(SLGetSizeBuiltinFactory.getInstance());
         installBuiltin(SLHasSizeBuiltinFactory.getInstance());
-        installBuiltin(SLIsExecutableBuiltinFactory.getInstance());
-        installBuiltin(SLIsNullBuiltinFactory.getInstance());
-        installBuiltin(SLWrapPrimitiveBuiltinFactory.getInstance());
         installBuiltin(SLTypeOfBuiltinFactory.getInstance());
         installBuiltin(SLIsInstanceBuiltinFactory.getInstance());
-        installBuiltin(SLJavaTypeBuiltinFactory.getInstance());
-        installBuiltin(SLExitBuiltinFactory.getInstance());
-        installBuiltin(SLRegisterShutdownHookBuiltinFactory.getInstance());
-        installBuiltin(SLAddToHostClassPathBuiltinFactory.getInstance());
-        installBuiltin(SLInNativeImageBuiltinFactory.getInstance());
-
         installBuiltin(SLStringSubstringBuiltinFactory.getInstance());
+        installBuiltin(SLStringSplitBuiltinFactory.getInstance());
         installBuiltin(SLObjectHasPropertyBuiltinFactory.getInstance());
         installBuiltin(SLObjectDeletePropertyBuiltinFactory.getInstance());
     }

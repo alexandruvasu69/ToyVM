@@ -398,6 +398,9 @@ public final class SLLanguage extends TruffleLanguage<SLContext> {
      * when they are first stored, i.e., the store triggers a shape change of the object.
      */
     public SLObject createObject(AllocationReporter reporter) {
+        if (reporter == null) {
+            return new SLObject(rootShape);
+        }
         reporter.onEnter(null, 0, AllocationReporter.SIZE_UNKNOWN);
         SLObject object = new SLObject(rootShape);
         reporter.onReturnValue(object, 0, AllocationReporter.SIZE_UNKNOWN);

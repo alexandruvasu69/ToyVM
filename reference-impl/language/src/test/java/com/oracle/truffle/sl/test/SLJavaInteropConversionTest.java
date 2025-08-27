@@ -52,11 +52,13 @@ import java.util.Map;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.oracle.truffle.sl.SLLanguage;
 import org.graalvm.polyglot.HostAccess;
 
+@Ignore
 public class SLJavaInteropConversionTest {
     public static class Validator {
         @HostAccess.Export

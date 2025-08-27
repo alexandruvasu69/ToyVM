@@ -11,4 +11,9 @@ function main() {
 	println(hasSize(s2));
 
 	s3 = subString(32, 42, 33);
+
+	s4 = "yet another string";
+	tokens = split(s4);
+	print(hasSize(tokens));
+	print(getSize(tokens));
 }

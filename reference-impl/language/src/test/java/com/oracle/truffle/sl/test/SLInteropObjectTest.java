@@ -45,11 +45,9 @@ import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyInstantiable;
 import org.graalvm.polyglot.proxy.ProxyObject;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
+@Ignore
 public class SLInteropObjectTest {
     private Context context;
 

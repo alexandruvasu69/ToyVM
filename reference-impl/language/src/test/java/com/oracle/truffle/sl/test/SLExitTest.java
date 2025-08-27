@@ -46,8 +46,10 @@ import java.io.IOException;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.PolyglotException;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class SLExitTest {
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 

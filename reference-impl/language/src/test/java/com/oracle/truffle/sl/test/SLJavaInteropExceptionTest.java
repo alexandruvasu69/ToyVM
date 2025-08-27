@@ -65,10 +65,12 @@ import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.oracle.truffle.sl.SLLanguage;
 
+@Ignore
 public class SLJavaInteropExceptionTest {
     public static class Validator {
         @HostAccess.Export

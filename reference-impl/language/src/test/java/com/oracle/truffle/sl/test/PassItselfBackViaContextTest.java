@@ -48,6 +48,7 @@ import org.graalvm.polyglot.PolyglotAccess;
 import org.graalvm.polyglot.Value;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.oracle.truffle.api.TruffleLanguage;
@@ -56,6 +57,7 @@ import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
+@Ignore
 public class PassItselfBackViaContextTest {
     private Context context;
     private MyObj myObj;

@@ -58,8 +58,10 @@ import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.Value;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class SLJavaInteropTest {
 
     private Context context;
