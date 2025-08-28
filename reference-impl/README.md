@@ -28,7 +28,9 @@ The RI has been tested on Linux and Mac OS (apple silicon). We expect Windows to
 
 # Building
 
-Build the project with `mvn package`.
+Build the project with `mvn package -DskipTests`.
+
+The ` -DskipTests` flag disables some Truffle-specific tests that are not relevant for the project. See below to test the reference implementation.
 
 # Running a single application
 
