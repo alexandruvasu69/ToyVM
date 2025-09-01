@@ -1,4 +1,4 @@
-# VM Course 2024 (2IMD20) Project folder
+# VM Course 2025 (2IMD20) Project folder
 
 This repository contains the basic code and tests for the programming language VM that you will have to develop in the project.
 

@@ -1,4 +1,4 @@
-# VM Course 2024 (2IMD20) Reference Implementation
+# VM Course 2025 (2IMD20) Reference Implementation
 
 This repository contains the _reference implementation_ (RI) for the programming language that you will have to develop in the project.
 
