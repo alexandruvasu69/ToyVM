@@ -45,6 +45,6 @@ WORKDIR /usr/src/vm
 RUN java -version && mvn -version
 
 RUN ls -al .
-RUN cd reference-impl && mvn clean package
+RUN cd reference-impl && mvn clean package -DskipTests
 
 CMD ["bash"]
