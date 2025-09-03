@@ -38,7 +38,7 @@ The docker image contains Maven and `java`, so it should be possible to build an
 
 Please keep in mind that the Docker image is created when you run the `docker build` command _using a COPY of your local git repo_. This means that the image contains a snapshot of your dev folder that is taken at image generation time, but it is _not_ synchronized with your host OS. The docker image contains `git` and other basic dev tools, but has not been tested for SW development, and you might need to change the `Dockerfile` to adapt it to your needs.
 
-It is also possible to synchronize the folder, you can run the docker container from the root directory:
+On this note, it is possible to synchronize the folder by running the docker container with the following command from the root directory:
 
 ```
 docker run --mount type=bind,source=.,target=/usr/src/vm -it my-ubuntu-image:latest
