@@ -89,8 +89,6 @@ public class ToyLauncher {
             return mainFunction.invoke();
         }
 
-        ArrayList x = new ArrayList( );
-        x.get()
         return null;
     }
 
