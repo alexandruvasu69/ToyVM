@@ -124,4 +124,22 @@ public class SLException extends AbstractTruffleException {
         return new SLException(result.toString(), operation);
     }
 
+    @TruffleBoundary
+    public static SLException runtimeError(Node operation, String message) {
+        StringBuilder result = new StringBuilder();
+        result.append("Runtime error on");
+
+        if (operation != null) {
+            NodeInfo nodeInfo = SLLanguage.lookupNodeInfo(operation.getClass());
+            if (nodeInfo != null) {
+                result.append(" \"").append(nodeInfo.shortName()).append("\"");
+            }
+        }
+
+        result.append(": ");
+        result.append(message);
+
+        return new SLException(result.toString(), operation);
+    }
+
 }

@@ -53,6 +53,8 @@ import com.oracle.truffle.sl.SLException;
 import com.oracle.truffle.sl.nodes.SLBinaryNode;
 import com.oracle.truffle.sl.runtime.SLBigInteger;
 
+import java.math.BigInteger;
+
 /**
  * This class is similar to the extensively documented {@link SLAddNode}. Divisions by 0 throw the
  * same {@link ArithmeticException exception} as in Java, SL has no special handling for it to keep
@@ -63,6 +65,9 @@ public abstract class SLDivNode extends SLBinaryNode {
 
     @Specialization(rewriteOn = ArithmeticException.class)
     protected long doLong(long left, long right) throws ArithmeticException {
+        if (right == 0)
+          throw SLException.runtimeError(this, "Division by zero");
+
         long result = left / right;
         /*
          * The division overflows if left is Long.MIN_VALUE and right is -1.
@@ -76,6 +81,9 @@ public abstract class SLDivNode extends SLBinaryNode {
     @Specialization
     @TruffleBoundary
     protected SLBigInteger doSLBigInteger(SLBigInteger left, SLBigInteger right) {
+        if (right.getValue().compareTo(BigInteger.ZERO) == 0) {
+            throw SLException.runtimeError(this, "Division by zero");
+        }
         return new SLBigInteger(left.getValue().divide(right.getValue()));
     }
 
