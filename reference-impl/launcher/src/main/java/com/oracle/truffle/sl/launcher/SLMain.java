@@ -41,6 +41,7 @@
 package com.oracle.truffle.sl.launcher;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -88,6 +89,32 @@ public final class SLMain {
         System.exit(executeSource(source, System.in, System.out, options, launcherOutput));
     }
 
+    private static void handleExecutionException(PolyglotException ex) {
+        // Prepare file beforehand to avoid
+        File exceptionFile = new File("trace.log");
+        try {
+          if (!exceptionFile.exists() && !exceptionFile.createNewFile()) {
+            System.err.println("Failed to create trace file");
+            return;
+          }
+
+          if (ex.isInternalError()) {
+              System.err.println("Exception occurred, see trace.log for more info");
+
+              // for internal errors we print the full stack trace
+              PrintStream ps = new PrintStream(exceptionFile);
+              ex.printStackTrace(ps);
+              ps.close();
+          } else {
+              System.err.println(ex.getMessage());
+          }
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return;
+        }
+    }
+
     private static int executeSource(Source source, InputStream in, PrintStream out, Map<String, String> options, boolean launcherOutput) {
         Context context;
         PrintStream err = System.err;
@@ -109,12 +136,7 @@ public final class SLMain {
             }
             return 0;
         } catch (PolyglotException ex) {
-            if (ex.isInternalError()) {
-                // for internal errors we print the full stack trace
-                ex.printStackTrace();
-            } else {
-                err.println(ex.getMessage());
-            }
+            handleExecutionException(ex);
             return 1;
         } finally {
             context.close();
