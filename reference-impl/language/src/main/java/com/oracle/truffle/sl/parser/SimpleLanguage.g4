@@ -91,7 +91,7 @@ private static void throwParseError(Source source, int line, int charPositionInL
     int col = charPositionInLine + 1;
     String location = "-- line " + line + " col " + col + ": ";
     int length = token == null ? 1 : Math.max(token.getStopIndex() - token.getStartIndex(), 0);
-    throw new SLParseError(source, line, col, length, String.format("Error(s) parsing script:%n" + location + message));
+    throw new SLParseError(source, line, col, length, String.format("Error(s) parsing script :("));
 }
 
 public static Map<TruffleString, RootCallTarget> parseSL(SLLanguage language, Source source) {
@@ -250,11 +250,18 @@ term                                            { $result = $term.result; }
 
 term returns [SLExpressionNode result]
 :
-factor                                          { $result = $factor.result; }
+unary                                          { $result = $unary.result; }
 (
     op=('*' | '/')
-    factor                                      { $result = factory.createBinary($op, $result, $factor.result); }
+    unary                                      { $result = factory.createBinary($op, $result, $unary.result); }
 )*
+;
+
+unary returns [SLExpressionNode result]
+:
+op=('+' | '-') u=unary                          { $result = factory.createUnary($op, $u.result); }
+|
+factor                                          { $result = $factor.result; }
 ;
 
 
@@ -337,7 +344,7 @@ COMMENT : '/*' .*? '*/' -> skip;
 LINE_COMMENT : '//' ~[\r\n]* -> skip;
 
 fragment LETTER : [A-Z] | [a-z] | '_' | '$';
-fragment NON_ZERO_DIGIT : '-' | [1-9];
+fragment NON_ZERO_DIGIT : [1-9];
 fragment DIGIT : [0-9];
 fragment HEX_DIGIT : [0-9] | [a-f] | [A-F];
 fragment OCT_DIGIT : [0-7];

@@ -406,6 +406,41 @@ public class SLNodeFactory {
     }
 
     /**
+     * Returns the corresponding subclass of {@link SLExpressionNode} for binary expressions. </br>
+     * These nodes are currently not instrumented.
+     *
+     * @param opToken The operator of the binary expression
+     * @param leftNode The left node of the expression
+     * @return A subclass of SLExpressionNode using the given parameters based on the given opToken.
+     *         null if leftNode is null.
+     */
+    public SLExpressionNode createUnary(Token opToken, SLExpressionNode leftNode) {
+        if (leftNode == null) {
+            return null;
+        }
+        final SLExpressionNode leftUnboxed = SLUnboxNodeGen.create(leftNode);
+
+        final SLExpressionNode result;
+        switch (opToken.getText()) {
+            case "-":
+                result = new SLUnaryMinNode(leftUnboxed);
+                break;
+            case "+":
+                result = leftUnboxed;
+                break;
+            default:
+                throw new RuntimeException("unexpected operation: " + opToken.getText());
+        }
+
+        int start = leftNode.getSourceCharIndex();
+        int length = leftNode.getSourceEndIndex() - start;
+        result.setSourceSection(start, length);
+        result.addExpressionTag();
+
+        return result;
+    }
+
+    /**
      * Returns an {@link SLInvokeNode} for the given parameters.
      *
      * @param functionNode The function being called
