@@ -53,6 +53,7 @@ import com.oracle.truffle.sl.SLException;
 import com.oracle.truffle.sl.SLLanguage;
 import com.oracle.truffle.sl.runtime.SLContext;
 import com.oracle.truffle.sl.runtime.SLObject;
+import com.oracle.truffle.sl.runtime.SLStrings;
 
 
 @NodeInfo(shortName = "stringSplit")
@@ -71,7 +72,7 @@ public abstract class SLStringSplitBuiltin extends SLBuiltinNode {
             int i = 0;
             for (String s : strings) {
                 try {
-                    objlib.writeMember(object, ""+(i++), s);
+                    objlib.writeMember(object, ""+(i++), SLStrings.fromJavaString(s));
 
                 } catch (UnsupportedMessageException | UnsupportedTypeException |
                          UnknownIdentifierException e) {

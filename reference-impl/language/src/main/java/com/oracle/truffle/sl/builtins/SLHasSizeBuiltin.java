@@ -45,6 +45,7 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.library.CachedLibrary;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.strings.TruffleString;
+import com.oracle.truffle.sl.runtime.SLObject;
 
 /**
  * Built-in function that queries if the foreign object has a size. See
@@ -55,7 +56,7 @@ public abstract class SLHasSizeBuiltin extends SLBuiltinNode {
 
     @Specialization(limit = "3")
     public boolean hasSize(Object obj, @CachedLibrary("obj") InteropLibrary arrays) {
-        if (obj instanceof TruffleString) {
+        if (obj instanceof SLObject || obj instanceof TruffleString) {
             return true;
         }
         return arrays.hasArrayElements(obj);
