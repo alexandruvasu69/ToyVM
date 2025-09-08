@@ -60,6 +60,7 @@ import com.oracle.truffle.sl.nodes.SLBinaryNode;
 import com.oracle.truffle.sl.nodes.SLTypes;
 import com.oracle.truffle.sl.nodes.util.SLToTruffleStringNode;
 import com.oracle.truffle.sl.runtime.SLBigInteger;
+import com.oracle.truffle.sl.runtime.SLFunction;
 
 /**
  * SL node that performs the "+" operation, which performs addition on arbitrary precision numbers,
@@ -160,7 +161,8 @@ public abstract class SLAddNode extends SLBinaryNode {
      * is a {@link TruffleString}.
      */
     protected boolean isString(Object a, Object b) {
-        return a instanceof TruffleString || b instanceof TruffleString;
+        return (a instanceof TruffleString || b instanceof TruffleString)
+               && !(a instanceof SLFunction || b instanceof SLFunction);
     }
 
     @Fallback
