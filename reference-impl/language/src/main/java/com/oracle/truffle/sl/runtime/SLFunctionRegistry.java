@@ -140,4 +140,8 @@ public final class SLFunctionRegistry {
         return functionsObject;
     }
 
+    public boolean hasFunction(SLFunction obj) {
+        return getFunctions().contains(obj);
+    }
+
 }

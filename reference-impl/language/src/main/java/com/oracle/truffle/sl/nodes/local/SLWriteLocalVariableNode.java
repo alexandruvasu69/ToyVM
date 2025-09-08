@@ -40,6 +40,8 @@
  */
 package com.oracle.truffle.sl.nodes.local;
 
+import java.util.List;
+
 import com.oracle.truffle.api.dsl.Fallback;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
@@ -48,11 +50,15 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
+import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.source.SourceSection;
 import com.oracle.truffle.api.strings.TruffleString;
 import com.oracle.truffle.sl.nodes.SLExpressionNode;
 import com.oracle.truffle.sl.nodes.interop.NodeObjectDescriptor;
+import com.oracle.truffle.sl.runtime.SLFunction;
+import com.oracle.truffle.sl.runtime.SLContext;
+import com.oracle.truffle.sl.SLException;
 
 /**
  * Node to write a local variable to a function's {@link VirtualFrame frame}. The Truffle frame API
@@ -62,6 +68,7 @@ import com.oracle.truffle.sl.nodes.interop.NodeObjectDescriptor;
 @NodeField(name = "slot", type = int.class)
 @NodeField(name = "nameNode", type = SLExpressionNode.class)
 @NodeField(name = "declaration", type = boolean.class)
+@NodeInfo(shortName = "=")
 public abstract class SLWriteLocalVariableNode extends SLExpressionNode {
 
     /**
@@ -124,6 +131,10 @@ public abstract class SLWriteLocalVariableNode extends SLExpressionNode {
          *
          * No-op if kind is already Object.
          */
+        // Do not assign functions that are not defined
+        if (value instanceof SLFunction && !SLContext.get(this).getFunctionRegistry().hasFunction((SLFunction)value))
+            throw SLException.runtimeError(this, "Unknown object: \"" + ((SLFunction)value).toString() + "\"");
+
         frame.getFrameDescriptor().setSlotKind(getSlot(), FrameSlotKind.Object);
 
         frame.setObject(getSlot(), value);

@@ -47,6 +47,8 @@ import com.oracle.truffle.api.library.CachedLibrary;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.sl.runtime.SLContext;
 import com.oracle.truffle.sl.runtime.SLLanguageView;
+import com.oracle.truffle.sl.runtime.SLFunction;
+import com.oracle.truffle.sl.SLException;
 
 /**
  * Builtin function to write a value to the {@link SLContext#getOutput() standard output}. The
@@ -64,6 +66,10 @@ public abstract class SLPrintlnBuiltin extends SLBuiltinNode {
     @TruffleBoundary
     public Object println(Object value,
                     @CachedLibrary(limit = "3") InteropLibrary interop) {
+        // SLFunctions are evaluated before. If we have one at this point, then something is weird.
+        if (value instanceof SLFunction)
+            throw SLException.runtimeError(this, "Unknown object: \"" + ((SLFunction)value).toString() + "\"");
+
         SLContext.get(this).getOutput().println(interop.toDisplayString(SLLanguageView.forValue(value)));
         return value;
     }
