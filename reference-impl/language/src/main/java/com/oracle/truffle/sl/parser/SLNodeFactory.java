@@ -552,15 +552,12 @@ public class SLNodeFactory {
     }
 
     private TruffleString asTruffleString(Token literalToken, boolean removeQuotes) {
-        int fromIndex = literalToken.getStartIndex();
-        int length = literalToken.getStopIndex() - literalToken.getStartIndex() + 1;
+        String raw = literalToken.getText();
         if (removeQuotes) {
-            /* Remove the trailing and ending " */
-            assert literalToken.getText().length() >= 2 && literalToken.getText().startsWith("\"") && literalToken.getText().endsWith("\"");
-            fromIndex += 1;
-            length -= 2;
+          assert raw.length() >= 2 && raw.startsWith("\"") && raw.endsWith("\"");
+          raw = raw.substring(1, raw.length() - 1);
         }
-        return sourceString.substringByteIndexUncached(fromIndex * 2, length * 2, SLLanguage.STRING_ENCODING, true);
+        return TruffleString.fromJavaStringUncached(raw, SLLanguage.STRING_ENCODING);
     }
 
     public SLExpressionNode createNumericLiteral(Token literalToken) {

@@ -10,4 +10,3 @@ function main() {
   println(-2 - -5);
   println(4 - -5);
 }
-
