@@ -3,6 +3,13 @@
  * Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
  */
 
+function toString(val) {
+  return "" + val;
+}
+
+function null() {
+}
+
 function main() {
   println(typeOf(42));
   println(typeOf(42000000000000000000000000000000000000000));
@@ -11,6 +18,10 @@ function main() {
   println(typeOf(new()));
   println(typeOf(main));
   println(typeOf(null()));
-}
-function null() {
+
+  println(typeOf(32) == typeOf(7198219));
+  println(typeOf(32) == typeOf("32"));
+
+  println(typeOf(32) == "Number");
+  println(toString(typeOf(32)) == "Number");
 }
