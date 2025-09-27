@@ -1,0 +1,27 @@
+Substr 0: base
+
+Substr 0: base
+Substr 1: case
+
+Substr 0: comma,test
+
+Substr 0: a
+Substr 1: ab
+Substr 2: 
+Substr 3: abc
+Substr 4: 
+Substr 5: 
+Substr 6: abcd
+
+Substr 0: 
+Substr 1: this
+Substr 2: 
+Substr 3: is
+Substr 4: 
+Substr 5: 
+Substr 6: an
+Substr 7: example
+
+thisisanexample
+Substr 0: 
+
