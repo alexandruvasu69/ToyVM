@@ -17,4 +17,12 @@ public class ToyAddNode extends ToyExpressionNode {
                 ", rightUnboxed=" + rightUnboxed +
                 '}';
     }
+
+    public ToyExpressionNode getLeftUnboxed() {
+        return leftUnboxed;
+    }
+
+    public ToyExpressionNode getRightUnboxed() {
+        return rightUnboxed;
+    }
 }

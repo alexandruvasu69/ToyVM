@@ -13,4 +13,8 @@ public class ToyBooleanLiteralNode extends ToyExpressionNode {
                 "value=" + value +
                 '}';
     }
+
+    public boolean getValue() {
+        return value;
+    }
 }

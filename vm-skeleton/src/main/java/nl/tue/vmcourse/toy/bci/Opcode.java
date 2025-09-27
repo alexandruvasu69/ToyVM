@@ -1,0 +1,79 @@
+package nl.tue.vmcourse.toy.bci;
+
+public enum Opcode {
+    ICONST(0x01, OperandKind.INT32),
+    SCONST(0x02, OperandKind.INT32),
+    BCONST(0x03, OperandKind.INT32),
+
+    LOAD(0x10, OperandKind.INT32),
+    STORE(0x11, OperandKind.INT32),
+
+    ADD(0x20),
+    MUL(0x21),
+    SUB(0x22),
+    DIV(0x23),
+    NEG(0x24),
+
+    EQ(0x30, OperandKind.INT32),
+    LT(0x31, OperandKind.INT32),
+    LE(0x32, OperandKind.INT32),
+    GT(0x33, OperandKind.INT32),
+    GE(0x34, OperandKind.INT32),
+
+    JMP(0x40, OperandKind.INT32),
+    JZ(0x41, OperandKind.INT32),
+    JNZ(0x42, OperandKind.INT32),
+
+    CALL(0x50, OperandKind.INT32, OperandKind.INT32),
+    RET(0x51, OperandKind.INT32),
+
+    PRINT(0x60);
+
+    public final byte code;
+    public final OperandKind[] operands;
+
+    Opcode(int code, OperandKind... operands) {
+        this.code = (byte) (code & 0xFF);
+        this.operands = operands;
+    }
+
+    public enum OperandKind {
+        INT32(4);
+
+        public final int size;
+        OperandKind(int size) {
+            this.size = size;
+        }
+    }
+
+    public int totalSize() {
+        int size = 1;
+        for(OperandKind op : operands) {
+            size += op.size;
+        }
+        return size;
+    }
+
+    public boolean hasOperands() {
+        return operands.length > 0;
+    }
+
+    public int numberOfOperands() {
+        return operands.length;
+    }
+
+    private static final Opcode[] BY_CODE = new Opcode[255];
+    static {
+        for (Opcode op : Opcode.values()) {
+            BY_CODE[op.code & 0xFF] = op;
+        }
+    }
+
+    public static Opcode fromByte(int code) {
+        Opcode op = BY_CODE[code & 0xFF];
+        if(op == null) {
+            throw new IllegalArgumentException();
+        }
+        return op;
+    }
+}

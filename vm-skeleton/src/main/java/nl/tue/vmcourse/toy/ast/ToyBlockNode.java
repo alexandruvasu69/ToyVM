@@ -2,6 +2,7 @@ package nl.tue.vmcourse.toy.ast;
 
 import nl.tue.vmcourse.toy.lang.VirtualFrame;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,5 +23,10 @@ public class ToyBlockNode extends ToyStatementNode {
                 "functionName=" + functionName +
                 ", statements=" + Arrays.toString(statements) +
                 '}';
+    }
+
+    @Override
+    public List<ToyAstNode> getChildren() {
+        return new ArrayList<>(Arrays.asList(statements));
     }
 }

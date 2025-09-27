@@ -19,4 +19,12 @@ public class ToyInvokeNode extends ToyExpressionNode {
                 ", toyExpressionNodes=" + Arrays.toString(toyExpressionNodes) +
                 '}';
     }
+
+    public ToyExpressionNode getFunctionNode() {
+        return functionNode;
+    }
+
+    public ToyExpressionNode[] getToyExpressionNodes() {
+        return toyExpressionNodes;
+    }
 }

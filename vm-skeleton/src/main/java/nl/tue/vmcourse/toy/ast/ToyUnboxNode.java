@@ -14,4 +14,8 @@ public class ToyUnboxNode extends ToyExpressionNode {
                 "leftNode=" + leftNode +
                 '}';
     }
+
+    public ToyExpressionNode getLeftNode() {
+        return leftNode;
+    }
 }

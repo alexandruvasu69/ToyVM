@@ -9,11 +9,25 @@ public class ToyWhileNode extends ToyStatementNode {
         this.bodyNode = bodyNode;
     }
 
+    
+
     @Override
     public String toString() {
         return "ToyWhileNode{" +
                 "conditionNode=" + conditionNode +
                 ", bodyNode=" + bodyNode +
                 '}';
+    }
+
+
+
+    public ToyExpressionNode getConditionNode() {
+        return conditionNode;
+    }
+
+
+
+    public ToyStatementNode getBodyNode() {
+        return bodyNode;
     }
 }

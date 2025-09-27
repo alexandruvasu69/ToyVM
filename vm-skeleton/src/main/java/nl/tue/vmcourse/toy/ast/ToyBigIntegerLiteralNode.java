@@ -16,4 +16,8 @@ public class ToyBigIntegerLiteralNode extends ToyExpressionNode {
                 "bigInteger=" + bigInteger +
                 '}';
     }
+
+    public BigInteger getBigInteger() {
+        return bigInteger;
+    }
 }

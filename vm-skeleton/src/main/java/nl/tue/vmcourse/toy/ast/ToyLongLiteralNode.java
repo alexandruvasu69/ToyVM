@@ -14,4 +14,8 @@ public class ToyLongLiteralNode extends ToyExpressionNode {
                 "value=" + value +
                 '}';
     }
+
+    public long getValue() {
+        return value;
+    }
 }

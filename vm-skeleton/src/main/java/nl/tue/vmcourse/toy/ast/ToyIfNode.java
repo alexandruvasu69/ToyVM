@@ -11,6 +11,8 @@ public class ToyIfNode extends ToyStatementNode {
         this.elsePartNode = elsePartNode;
     }
 
+    
+
     @Override
     public String toString() {
         return "ToyIfNode{" +
@@ -18,5 +20,23 @@ public class ToyIfNode extends ToyStatementNode {
                 ", thenPartNode=" + thenPartNode +
                 ", elsePartNode=" + elsePartNode +
                 '}';
+    }
+
+
+
+    public ToyExpressionNode getConditionNode() {
+        return conditionNode;
+    }
+
+
+
+    public ToyStatementNode getThenPartNode() {
+        return thenPartNode;
+    }
+
+
+
+    public ToyStatementNode getElsePartNode() {
+        return elsePartNode;
     }
 }

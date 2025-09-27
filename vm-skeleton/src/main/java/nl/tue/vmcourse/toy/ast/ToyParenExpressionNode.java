@@ -13,4 +13,8 @@ public class ToyParenExpressionNode extends ToyExpressionNode {
                 "expressionNode=" + expressionNode +
                 '}';
     }
+
+    public ToyExpressionNode getExpressionNode() {
+        return expressionNode;
+    }
 }

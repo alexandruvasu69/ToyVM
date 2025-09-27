@@ -14,4 +14,8 @@ public class ToyFunctionLiteralNode extends ToyExpressionNode {
                 "name='" + name + '\'' +
                 '}';
     }
+
+    public String getName() {
+        return name;
+    }
 }
