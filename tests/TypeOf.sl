@@ -18,6 +18,7 @@ function main() {
   println(typeOf(new()));
   println(typeOf(main));
   println(typeOf(null()));
+  println(typeOf(typeOf(32)));
 
   println(typeOf(32) == typeOf(7198219));
   println(typeOf(32) == typeOf("32"));

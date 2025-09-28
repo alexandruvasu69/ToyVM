@@ -11,6 +11,7 @@ function printTypes(type) {
   println(isInstance(type, new()));
   println(isInstance(type, null));
   println(isInstance(type, null()));
+  println(isInstance(type, typeOf(typeOf(42))));
   println("");
 }
 
@@ -24,6 +25,7 @@ function main() {
   object = typeOf(new());
   f = typeOf(null);
   null = typeOf(null());
+  type = typeOf(number);
   
   printTypes(number);
   printTypes(string);
@@ -31,4 +33,5 @@ function main() {
   printTypes(object);
   printTypes(f);
   printTypes(null);
+  printTypes(type);
 }
