@@ -1,7 +1,25 @@
 #!/bin/bash
 
+function get_pattern() {
+  echo "^.*(\/\/|\/\*|\*).*((${1}.*[T|t]est)|([T|t]est.*${1}))"
+}
+
+function find_type() {
+  local FILE=$1;
+  local OBJ=`find -- "$FILE" -type f -name "*.sl" -exec egrep -nHr "$(get_pattern "[O|o]bject")" {} \; | wc -l`
+  local STR=`find -- "$FILE" -type f -name "*.sl" -exec egrep -nHr "$(get_pattern "[S|s]tring")" {} \; | wc -l`
+  local CMP=`find -- "$FILE" -type f -name "*.sl" -exec egrep -nHr "$(get_pattern "[C|c]omputation")" {} \; | wc -l`
+  local OTH=`find -- "$FILE" -type f -name "*.sl" -exec egrep -nHr "$(get_pattern "[O|o]ther")" {} \; | wc -l`
+
+  echo "$FILE has:"
+  echo "Object: $OBJ"
+  echo "String: $STR"
+  echo "Comput: $CMP"
+  echo "Other:  $OTH"
+}
+
 # Folder containing the input files
-folder="./tests"
+folder="./student_tests/"
 
 if [ -e "$1" ] && [ -x "$1" ]; then
   sl="$1"
@@ -30,14 +48,28 @@ echo "" > suspicious.log
 rm *.tmp
 
 x=130
+
+processed_log="./processed_files.txt"
+touch -- "$processed_log"
+
+# Find the types of files
+find_type $folder
+
 # Iterate over all files in the folder
 #for file in "$folder"/*.sl; do
 for file in $(find $folder -type f -name "*.sl"); do
   #  Skip if it's not a regular file
   [ -f "$file" ] || continue
-  file="${file%.*}"
 
   ((iters++))
+  # Skip if already processed
+  # if grep -Fxq -- "$file" "$processed_log"; then
+  #   echo "[$iters] $file already tested";
+  #   continue
+  # fi
+
+  og_file=$file
+  file="${file%.*}"
 
   # if [ "$iters" -lt 240 ]; then
   #     continue  # Skip this iteration
@@ -88,6 +120,7 @@ for file in $(find $folder -type f -name "*.sl"); do
     else
       echo "!!!! FATAL !!!! Output file $output_file not found for $file."
       echo "!!!! FATAL !!!! $output_file not found for $file."  >> fatal_errors.log
+      # exit -1
       ((fatals++))
     fi
   else
@@ -121,9 +154,12 @@ for file in $(find $folder -type f -name "*.sl"); do
     else
       echo "!!!! FATAL !!!!!: Error file $error_file not found for $file."
       echo "!!!! FATAL !!!!!: $error_file not found for $file." >> fatal_errors.log
+      # exit -1
       ((fatals++))
     fi
   fi
+
+  echo "$og_file" >> "$processed_log"
 done
 
 echo "========== ALL DONE =========="
