@@ -15,7 +15,7 @@ import org.antlr.v4.runtime.Token;
 public class ToyNodeFactory {
 
     // TODO this could be a config flag, not a constant.
-    private static final boolean DUMP_AST = true;
+    private static final boolean DUMP_AST = System.getProperty("toy.DumpAST") != null;
 
     public ToyExpressionNode createMinExpression(ToyExpressionNode exp) {
         return new ToyUnaryMinNode(exp);
@@ -110,7 +110,7 @@ public class ToyNodeFactory {
                 System.out.println("+++++");
                 System.out.println("+++++ AST for " + functionName);
                 System.out.println("+++++");
-                System.out.println(methodBlock.toString());
+                System.out.println(((ToyBlockNode)methodBlock).printTree(functionName));
                 System.out.println("+++++");
             }
 

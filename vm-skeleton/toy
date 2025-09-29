@@ -47,6 +47,8 @@ if [ -e "$JAVA_HOME/bin/java" ]; then
             JAVA_ARGS+=("-Dtoy.StringRopes") ;;
         -array-strategies)
             JAVA_ARGS+=("-Dtoy.ArrayStrategies") ;;
+        -dump-ast)
+            JAVA_ARGS+=("-Dtoy.DumpAST") ;;
         *)
             PROGRAM_ARGS+=("$opt") ;;
       esac
