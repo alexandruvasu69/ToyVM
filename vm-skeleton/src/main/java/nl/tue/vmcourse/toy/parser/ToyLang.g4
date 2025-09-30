@@ -53,8 +53,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import interpreter.ast.ToyExpressionNode;
-import interpreter.ast.ToyStatementNode;
+import nl.tue.vmcourse.toy.ast.ToyExpressionNode;
+import nl.tue.vmcourse.toy.ast.ToyStatementNode;
 import nl.tue.vmcourse.toy.interpreter.ToyNodeFactory;
 import nl.tue.vmcourse.toy.interpreter.ToySyntaxErrorException;
 }
@@ -92,7 +92,7 @@ private static void throwParseError(int line, int charPositionInLine, Token toke
     int col = charPositionInLine + 1;
     String location = "-- line " + line + " col " + col + ": ";
     int length = token == null ? 1 : Math.max(token.getStopIndex() - token.getStartIndex(), 0);
-    throw new ToySyntaxErrorException(String.format("Error(s) parsing script:%n" + location + message));
+    throw new ToySyntaxErrorException(String.format("Error(s) parsing script :("));
 }
 /*
 public static Map<TruffleString, RootCallTarget> parseSL(SLLanguage language, Source source) {
@@ -248,11 +248,18 @@ term                                            { $result = $term.result; }
 
 term returns [ToyExpressionNode result]
 :
-factor                                          { $result = $factor.result; }
+unary                                          { $result = $unary.result; }
 (
     op=('*' | '/')
-    factor                                      { $result = factory.createBinary($op, $result, $factor.result); }
+    unary                                      { $result = factory.createBinary($op, $result, $unary.result); }
 )*
+;
+
+unary returns [ToyExpressionNode result]
+:
+op=('+' | '-') u=unary                          { $result = factory.createUnary($op, $u.result); }
+|
+factor                                          { $result = $factor.result; }
 ;
 
 
@@ -269,14 +276,6 @@ factor returns [ToyExpressionNode result]
     STRING_LITERAL                              { $result = factory.createStringLiteral($STRING_LITERAL, true); }
 |
     NUMERIC_LITERAL                             { $result = factory.createNumericLiteral($NUMERIC_LITERAL); }
-|
-    d='universe'                                { $result = factory.createUniverse($d); }
-|
-    d='undef'                                { $result = factory.createUndef($d); }
-|
-    d='newObject'                                { $result = factory.createNewObject($d); }
-|
-    d='newArray'                                { $result = factory.createNewArray($d); }
 |
     d='true'                                { $result = factory.createBooleanLiteral(true); }
 |
@@ -343,7 +342,7 @@ COMMENT : '/*' .*? '*/' -> skip;
 LINE_COMMENT : '//' ~[\r\n]* -> skip;
 
 fragment LETTER : [A-Z] | [a-z] | '_' | '$';
-fragment NON_ZERO_DIGIT : '-' | [1-9];
+fragment NON_ZERO_DIGIT : [1-9];
 fragment DIGIT : [0-9];
 fragment HEX_DIGIT : [0-9] | [a-f] | [A-F];
 fragment OCT_DIGIT : [0-7];
