@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FOLDER="./benchmarks"
+folder="./benchmarks"
 
 if [ -z "$1" ]; then
     echo "Usage: $0 <executable>"
@@ -13,7 +13,7 @@ LOGFILE="execution_log_$(date +%Y%m%d_%H%M%S).log"
 
 echo "=== Logging output in $LOGFILE ==="
 
-for file in "$FOLDER"/*.sl; do
+for file in $(find $folder -type f -name "*.sl"); do
     if [ -f "$file" ]; then
         echo "running $file..." >> "$LOGFILE"
         start_time=$(date +%s)

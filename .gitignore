@@ -1,4 +1,5 @@
 .DS_Store
 *.log
 *.jar
+execution_log*
 processed_files.txt
