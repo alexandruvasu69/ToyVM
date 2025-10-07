@@ -21,6 +21,7 @@ function display_help {
   echo '   -inline-caches      Enable Inline Caches'
   echo '   -string-ropes       Enable String Ropes'
   echo '   -array-strategies   Enable Array Storage Strategies'
+  echo '   -dump-ast           Dump the Abstract Syntax Tree'
   echo ''
   echo ' Examples:'
   echo '   toy -jit foo.sl'
@@ -45,6 +46,10 @@ if [ -e "$JAVA_HOME/bin/java" ]; then
             JAVA_ARGS+=("-Dtoy.InlineCaches") ;;
         -string-ropes)
             JAVA_ARGS+=("-Dtoy.StringRopes") ;;
+        -dump-ast)
+            JAVA_ARGS+=("-Dtoy.DumpAst") ;;
+        -dump-bytecode)
+            JAVA_ARGS+=("-Dtoy.DumpBytecode") ;;
         -array-strategies)
             JAVA_ARGS+=("-Dtoy.ArrayStrategies") ;;
         -dump-ast)

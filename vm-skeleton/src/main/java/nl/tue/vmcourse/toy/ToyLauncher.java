@@ -2,8 +2,14 @@ package nl.tue.vmcourse.toy;
 
 import com.ibm.icu.impl.Assert;
 import nl.tue.vmcourse.toy.interpreter.ToySyntaxErrorException;
+import nl.tue.vmcourse.toy.lang.FrameDescriptor;
 import nl.tue.vmcourse.toy.lang.RootCallTarget;
+import nl.tue.vmcourse.toy.lang.VirtualFrame;
+import nl.tue.vmcourse.toy.builtins.NewObject;
+import nl.tue.vmcourse.toy.builtins.PrintBuiltin;
+import nl.tue.vmcourse.toy.interpreter.ToyAbstractFunctionBody;
 import nl.tue.vmcourse.toy.interpreter.ToyNodeFactory;
+import nl.tue.vmcourse.toy.interpreter.ToyRootNode;
 import nl.tue.vmcourse.toy.parser.ToyLangLexer;
 import nl.tue.vmcourse.toy.parser.ToyLangParser;
 import org.antlr.v4.runtime.*;
@@ -20,6 +26,8 @@ public class ToyLauncher {
     public static final boolean IC_ENABLED;
     public static final boolean ROPES_ENABLED;
     public static final boolean ARRAYS_ENABLED;
+    public static final boolean DUMP_AST = System.getProperty("toy.DumpAst") != null; 
+    public static final boolean DUMP_BYTECODE = System.getProperty("toy.DumpBytecode") != null; 
 
     static {
         // In your final submission, you want to remove this (otherwise, tests may fail!)
@@ -85,11 +93,19 @@ public class ToyLauncher {
         Map<String, RootCallTarget> allFunctions = factory.getAllFunctions();
         if (!allFunctions.isEmpty() && allFunctions.containsKey("main")) {
             RootCallTarget mainFunction = allFunctions.get("main");
+            registerBuiltin(allFunctions, new PrintBuiltin(), "print");
+            registerBuiltin(allFunctions, new NewObject(), "new");
             // TODO register builtins, initialize global scope, ...
             return mainFunction.invoke();
         }
 
         return null;
+    }
+
+    private static void registerBuiltin(Map<String, RootCallTarget> allFunctions, ToyAbstractFunctionBody builtin, String functionName) {
+        ToyRootNode rootNode = new ToyRootNode(FrameDescriptor.newBuilder().build(), builtin, functionName);
+        RootCallTarget callTarget = new RootCallTarget(rootNode);
+        allFunctions.put(rootNode.getFunctionName(), callTarget);
     }
 
     public static void main(String[] args) throws IOException {
@@ -102,7 +118,7 @@ public class ToyLauncher {
         CharStream charStream = CharStreams.fromFileName(args[args.length - 1]);
         try {
             Object result = evalStream(charStream);
-            System.out.println(result);
+            // System.out.println(result);
         } catch (ToySyntaxErrorException e) {
             System.err.println(e.getMessage());
             System.exit(1);

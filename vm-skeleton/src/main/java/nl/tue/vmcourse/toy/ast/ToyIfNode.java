@@ -1,5 +1,7 @@
 package nl.tue.vmcourse.toy.ast;
 
+import nl.tue.vmcourse.toy.bci.IAstVisitor;
+
 public class ToyIfNode extends ToyStatementNode {
     private final ToyExpressionNode conditionNode;
     private final ToyStatementNode thenPartNode;
@@ -22,21 +24,20 @@ public class ToyIfNode extends ToyStatementNode {
                 '}';
     }
 
-
-
     public ToyExpressionNode getConditionNode() {
         return conditionNode;
     }
-
-
 
     public ToyStatementNode getThenPartNode() {
         return thenPartNode;
     }
 
-
-
     public ToyStatementNode getElsePartNode() {
         return elsePartNode;
+    }
+
+    @Override
+    public <R> R accept(IAstVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

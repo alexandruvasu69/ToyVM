@@ -1,5 +1,7 @@
 package nl.tue.vmcourse.toy.ast;
 
+import nl.tue.vmcourse.toy.bci.IAstVisitor;
+
 public class ToyStringLiteralNode extends ToyExpressionNode {
 
     private final String value;
@@ -17,5 +19,10 @@ public class ToyStringLiteralNode extends ToyExpressionNode {
         return "ToyStringLiteralNode{" +
                 "value='" + value + '\'' +
                 '}';
+    }
+
+    @Override
+    public <R> R accept(IAstVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

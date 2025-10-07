@@ -14,4 +14,10 @@ public class RootCallTarget {
         return rootNode.execute(frame);
     }
 
+    public ToyRootNode getRootNode() {
+        return rootNode;
+    }
+
+    
+
 }

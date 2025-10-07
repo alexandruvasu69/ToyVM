@@ -6,10 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nl.tue.vmcourse.toy.ToyLauncher;
 import nl.tue.vmcourse.toy.ast.*;
 import nl.tue.vmcourse.toy.bci.*;
+import nl.tue.vmcourse.toy.builtins.PrintBuiltin;
 import nl.tue.vmcourse.toy.lang.FrameDescriptor;
 import nl.tue.vmcourse.toy.lang.RootCallTarget;
+import nl.tue.vmcourse.toy.lang.VirtualFrame;
+
 import org.antlr.v4.runtime.Token;
 
 public class ToyNodeFactory {
@@ -94,6 +98,15 @@ public class ToyNodeFactory {
         parameterCount++;
     }
 
+    public void registerPrintBuiltIn(PrintBuiltin builtIn) {
+        ToyAbstractFunctionBody functionBody = new ToyAbstractFunctionBody() {
+            @Override
+            public Object execute(VirtualFrame frame) {
+                return builtIn.invoke(frame.toString());
+            }
+        };
+    }
+
     public void finishFunction(ToyStatementNode bodyNode) {
         if (bodyNode == null) {
             // a state update that would otherwise be performed by finishBlock
@@ -102,17 +115,18 @@ public class ToyNodeFactory {
             methodNodes.add(bodyNode);
             final ToyStatementNode methodBlock = finishBlock(methodNodes);
             assert lexicalScope == null : "Wrong scoping of blocks in parser";
-
-            final ToyAbstractFunctionBody functionBodyNode = AstToBciAssembler.build(methodBlock);
-
             // TODO remove this println (otherwise all tests will fail...)
-            if (DUMP_AST) {
+            if (ToyLauncher.DUMP_AST) {
                 System.out.println("+++++");
                 System.out.println("+++++ AST for " + functionName);
                 System.out.println("+++++");
                 System.out.println(((ToyBlockNode)methodBlock).printTree(functionName));
                 System.out.println("+++++");
             }
+
+            final ToyAbstractFunctionBody functionBodyNode = AstToBciAssembler.build(methodBlock, allFunctions);
+
+            
 
             final ToyRootNode rootNode = new ToyRootNode(frameDescriptorBuilder.build(), functionBodyNode, functionName);
             allFunctions.put(functionName, rootNode.getCallTarget());

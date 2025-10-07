@@ -1,5 +1,7 @@
 package nl.tue.vmcourse.toy.ast;
 
+import nl.tue.vmcourse.toy.bci.IAstVisitor;
+
 public class ToyWritePropertyNode extends ToyExpressionNode {
     private final ToyExpressionNode receiverNode;
     private final ToyExpressionNode nameNode;
@@ -19,5 +21,22 @@ public class ToyWritePropertyNode extends ToyExpressionNode {
                 ", nameNode=" + nameNode +
                 ", valueNode=" + valueNode +
                 '}';
+    }
+
+    @Override
+    public <R> R accept(IAstVisitor<R> visitor) {
+        return visitor.visit(this);
+    }
+
+    public ToyExpressionNode getReceiverNode() {
+        return receiverNode;
+    }
+
+    public ToyExpressionNode getNameNode() {
+        return nameNode;
+    }
+
+    public ToyExpressionNode getValueNode() {
+        return valueNode;
     }
 }

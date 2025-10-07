@@ -2,6 +2,8 @@ package nl.tue.vmcourse.toy.ast;
 
 import java.math.BigInteger;
 
+import nl.tue.vmcourse.toy.bci.IAstVisitor;
+
 public class ToyBigIntegerLiteralNode extends ToyExpressionNode {
     private final BigInteger bigInteger;
 
@@ -19,5 +21,10 @@ public class ToyBigIntegerLiteralNode extends ToyExpressionNode {
 
     public BigInteger getBigInteger() {
         return bigInteger;
+    }
+
+    @Override
+    public <R> R accept(IAstVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

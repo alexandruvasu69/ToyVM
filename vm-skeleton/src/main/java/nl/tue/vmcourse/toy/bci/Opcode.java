@@ -7,6 +7,10 @@ public enum Opcode {
 
     LOAD(0x10, OperandKind.INT32),
     STORE(0x11, OperandKind.INT32),
+    LOAD_ARG(0x12, OperandKind.INT32),
+
+    LOAD_QUICK(0x13),
+    STORE_QUICK(0x14),
 
     ADD(0x20),
     MUL(0x21),
@@ -14,11 +18,11 @@ public enum Opcode {
     DIV(0x23),
     NEG(0x24),
 
-    EQ(0x30, OperandKind.INT32),
-    LT(0x31, OperandKind.INT32),
-    LE(0x32, OperandKind.INT32),
-    GT(0x33, OperandKind.INT32),
-    GE(0x34, OperandKind.INT32),
+    ADD_I(0x25),
+
+    EQ(0x30),
+    LT(0x31),
+    LE(0x32),
 
     JMP(0x40, OperandKind.INT32),
     JZ(0x41, OperandKind.INT32),
@@ -27,7 +31,12 @@ public enum Opcode {
     CALL(0x50, OperandKind.INT32, OperandKind.INT32),
     RET(0x51, OperandKind.INT32),
 
-    PRINT(0x60);
+    CALL_PRINT(0x52),
+    CALL_NEW(0x53),
+    CALL_QUICK(0x54),
+
+    WRITE(0x60, OperandKind.INT32, OperandKind.INT32),
+    READ(0x61, OperandKind.INT32, OperandKind.INT32);
 
     public final byte code;
     public final OperandKind[] operands;

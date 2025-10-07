@@ -1,5 +1,6 @@
 package nl.tue.vmcourse.toy.ast;
 
+import nl.tue.vmcourse.toy.bci.IAstVisitor;
 import nl.tue.vmcourse.toy.lang.VirtualFrame;
 
 import java.util.ArrayList;
@@ -28,5 +29,10 @@ public class ToyBlockNode extends ToyStatementNode {
     @Override
     public List<ToyAstNode> getChildren() {
         return new ArrayList<>(Arrays.asList(statements));
+    }
+
+    @Override
+    public <R> R accept(IAstVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

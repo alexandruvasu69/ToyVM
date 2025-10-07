@@ -1,5 +1,7 @@
 package nl.tue.vmcourse.toy.ast;
 
+import nl.tue.vmcourse.toy.bci.IAstVisitor;
+
 public class ToyMulNode extends ToyExpressionNode {
     private final ToyExpressionNode leftUnboxed;
     private final ToyExpressionNode rightUnboxed;
@@ -24,5 +26,10 @@ public class ToyMulNode extends ToyExpressionNode {
 
     public ToyExpressionNode getRightUnboxed() {
         return rightUnboxed;
+    }
+
+    @Override
+    public <R> R accept(IAstVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

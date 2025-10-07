@@ -1,5 +1,7 @@
 package nl.tue.vmcourse.toy.ast;
 
+import nl.tue.vmcourse.toy.bci.IAstVisitor;
+
 public class ToyBooleanLiteralNode extends ToyExpressionNode {
     private final boolean value;
 
@@ -16,5 +18,10 @@ public class ToyBooleanLiteralNode extends ToyExpressionNode {
 
     public boolean getValue() {
         return value;
+    }
+
+    @Override
+    public <R> R accept(IAstVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

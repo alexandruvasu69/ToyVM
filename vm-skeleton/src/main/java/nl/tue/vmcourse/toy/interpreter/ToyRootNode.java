@@ -22,7 +22,18 @@ public class ToyRootNode extends ToyNode {
     }
 
     public Object execute(VirtualFrame frame) {
-        System.out.println("Body runtime class = " + functionBodyNode.getClass().getName());
         return functionBodyNode.execute(frame);
+    }
+
+    public FrameDescriptor getFrameDescriptor() {
+        return frameDescriptor;
+    }
+
+    public ToyAbstractFunctionBody getFunctionBodyNode() {
+        return functionBodyNode;
+    }
+
+    public String getFunctionName() {
+        return functionName;
     }
 }

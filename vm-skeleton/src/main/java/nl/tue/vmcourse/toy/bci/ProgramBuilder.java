@@ -60,10 +60,7 @@ public class ProgramBuilder {
             }
             for(int patch : l.patches) {
                 int pcAfterOperand = patch + 4;
-                System.out.println("PC AFTER OPERAND: " + pcAfterOperand);
                 int relativePos = l.pos - pcAfterOperand;
-                System.out.println("LABEL POS: " + l.pos);
-                System.out.println("RELATIVE POS: " + relativePos);
 
                 code[patch] = (byte) (relativePos & 0xFF);
                 code[patch + 1] = (byte) ((relativePos >>> 8) & 0xFF);
