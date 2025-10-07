@@ -1,12 +1,9 @@
 package nl.tue.vmcourse.toy.bci;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
-import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import nl.tue.vmcourse.toy.ToyLauncher;
 import nl.tue.vmcourse.toy.interpreter.ToyAbstractFunctionBody;

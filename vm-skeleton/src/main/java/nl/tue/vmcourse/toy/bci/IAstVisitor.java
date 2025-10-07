@@ -8,7 +8,6 @@ import nl.tue.vmcourse.toy.ast.ToyBreakNode;
 import nl.tue.vmcourse.toy.ast.ToyContinueNode;
 import nl.tue.vmcourse.toy.ast.ToyDivNode;
 import nl.tue.vmcourse.toy.ast.ToyEqualNode;
-import nl.tue.vmcourse.toy.ast.ToyExpressionNode;
 import nl.tue.vmcourse.toy.ast.ToyFunctionLiteralNode;
 import nl.tue.vmcourse.toy.ast.ToyIfNode;
 import nl.tue.vmcourse.toy.ast.ToyInvokeNode;
@@ -19,7 +18,6 @@ import nl.tue.vmcourse.toy.ast.ToyLogicalNotNode;
 import nl.tue.vmcourse.toy.ast.ToyLogicalOrNode;
 import nl.tue.vmcourse.toy.ast.ToyLongLiteralNode;
 import nl.tue.vmcourse.toy.ast.ToyMulNode;
-import nl.tue.vmcourse.toy.ast.ToyNewObjectNode;
 import nl.tue.vmcourse.toy.ast.ToyParenExpressionNode;
 import nl.tue.vmcourse.toy.ast.ToyReadArgumentNode;
 import nl.tue.vmcourse.toy.ast.ToyReadLocalVariableNode;
@@ -30,7 +28,6 @@ import nl.tue.vmcourse.toy.ast.ToyStringLiteralNode;
 import nl.tue.vmcourse.toy.ast.ToySubNode;
 import nl.tue.vmcourse.toy.ast.ToyUnaryMinNode;
 import nl.tue.vmcourse.toy.ast.ToyUnboxNode;
-import nl.tue.vmcourse.toy.ast.ToyUndefNode;
 import nl.tue.vmcourse.toy.ast.ToyWhileNode;
 import nl.tue.vmcourse.toy.ast.ToyWriteLocalVariableNode;
 import nl.tue.vmcourse.toy.ast.ToyWritePropertyNode;
@@ -73,8 +70,6 @@ public interface IAstVisitor<T> {
     T visit(ToyReadArgumentNode node);
     T visit(ToyReadLocalVariableNode node);
     
-    T visit(ToyNewObjectNode node);
-    T visit(ToyUndefNode node);
     T visit(ToyReadPropertyNode node);
     T visit(ToyWritePropertyNode node);
 

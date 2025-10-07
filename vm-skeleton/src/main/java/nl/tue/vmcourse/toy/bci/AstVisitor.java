@@ -2,8 +2,6 @@ package nl.tue.vmcourse.toy.bci;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashMap;
-import java.util.Map;
 
 import nl.tue.vmcourse.toy.ast.ToyAddNode;
 import nl.tue.vmcourse.toy.ast.ToyAstNode;
@@ -25,7 +23,6 @@ import nl.tue.vmcourse.toy.ast.ToyLogicalNotNode;
 import nl.tue.vmcourse.toy.ast.ToyLogicalOrNode;
 import nl.tue.vmcourse.toy.ast.ToyLongLiteralNode;
 import nl.tue.vmcourse.toy.ast.ToyMulNode;
-import nl.tue.vmcourse.toy.ast.ToyNewObjectNode;
 import nl.tue.vmcourse.toy.ast.ToyParenExpressionNode;
 import nl.tue.vmcourse.toy.ast.ToyReadArgumentNode;
 import nl.tue.vmcourse.toy.ast.ToyReadLocalVariableNode;
@@ -36,7 +33,6 @@ import nl.tue.vmcourse.toy.ast.ToyStringLiteralNode;
 import nl.tue.vmcourse.toy.ast.ToySubNode;
 import nl.tue.vmcourse.toy.ast.ToyUnaryMinNode;
 import nl.tue.vmcourse.toy.ast.ToyUnboxNode;
-import nl.tue.vmcourse.toy.ast.ToyUndefNode;
 import nl.tue.vmcourse.toy.ast.ToyWhileNode;
 import nl.tue.vmcourse.toy.ast.ToyWriteLocalVariableNode;
 import nl.tue.vmcourse.toy.ast.ToyWritePropertyNode;
@@ -318,7 +314,7 @@ public class AstVisitor implements IAstVisitor<Void> {
     @Override
     public Void visit(ToyReturnNode node) {
         if(node.getValueNode() == null) {
-            int index = programBuilder.addConst(ToyUndefNode.UNDEF);
+            int index = programBuilder.addConst(null);
             programBuilder.emit(Opcode.ICONST);
             programBuilder.emitInt(index);
         } else {
@@ -348,20 +344,6 @@ public class AstVisitor implements IAstVisitor<Void> {
     public Void visit(ToyReadLocalVariableNode node) {
         programBuilder.emit(Opcode.LOAD);
         programBuilder.emitInt(node.getFrameSlot());
-        return null;
-    }
-
-    @Override
-    public Void visit(ToyNewObjectNode node) {
-        // TODO: Implement NewObject node
-        // throw new UnsupportedOperationException("Unimplemented method 'visit'");
-        return null;
-    }
-
-    @Override
-    public Void visit(ToyUndefNode node) {
-        // TODO: Implement Undef node
-        // throw new UnsupportedOperationException("Unimplemented method 'visit'");
         return null;
     }
 
