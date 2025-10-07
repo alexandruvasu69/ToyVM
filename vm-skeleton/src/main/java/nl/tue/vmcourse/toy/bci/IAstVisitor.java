@@ -32,46 +32,46 @@ import nl.tue.vmcourse.toy.ast.ToyWhileNode;
 import nl.tue.vmcourse.toy.ast.ToyWriteLocalVariableNode;
 import nl.tue.vmcourse.toy.ast.ToyWritePropertyNode;
 
-public interface IAstVisitor<T> {
-    T visit(ToyBlockNode node);
+public interface IAstVisitor {
+    void visit(ToyBlockNode node);
 
-    T visit(ToyAddNode node);
-    T visit(ToySubNode node);
-    T visit(ToyMulNode node);
-    T visit(ToyDivNode node);
+    void visit(ToyAddNode node);
+    void visit(ToySubNode node);
+    void visit(ToyMulNode node);
+    void visit(ToyDivNode node);
     
-    T visit(ToyParenExpressionNode node);
+    void visit(ToyParenExpressionNode node);
 
-    T visit(ToyBigIntegerLiteralNode node);
-    T visit(ToyBooleanLiteralNode node);
-    T visit(ToyLongLiteralNode node);
-    T visit(ToyStringLiteralNode node);
+    void visit(ToyBigIntegerLiteralNode node);
+    void visit(ToyBooleanLiteralNode node);
+    void visit(ToyLongLiteralNode node);
+    void visit(ToyStringLiteralNode node);
 
-    T visit(ToyWhileNode node);
-    T visit(ToyBreakNode node);
-    T visit(ToyContinueNode node);
+    void visit(ToyWhileNode node);
+    void visit(ToyBreakNode node);
+    void visit(ToyContinueNode node);
 
-    T visit(ToyUnaryMinNode node);
+    void visit(ToyUnaryMinNode node);
 
-    T visit(ToyLogicalNotNode node);
-    T visit(ToyLogicalOrNode node);
-    T visit(ToyLogicalAndNode node);
-    T visit(ToyEqualNode node);
-    T visit(ToyLessOrEqualNode node);
-    T visit(ToyLessThanNode node);
+    void visit(ToyLogicalNotNode node);
+    void visit(ToyLogicalOrNode node);
+    void visit(ToyLogicalAndNode node);
+    void visit(ToyEqualNode node);
+    void visit(ToyLessOrEqualNode node);
+    void visit(ToyLessThanNode node);
 
-    T visit(ToyIfNode node);
-    T visit(ToyUnboxNode node);
+    void visit(ToyIfNode node);
+    void visit(ToyUnboxNode node);
     
-    T visit(ToyInvokeNode node);
-    T visit(ToyFunctionLiteralNode node);
-    T visit(ToyReturnNode node);
-    T visit(ToyWriteLocalVariableNode node);
-    T visit(ToyReadArgumentNode node);
-    T visit(ToyReadLocalVariableNode node);
+    void visit(ToyInvokeNode node);
+    void visit(ToyFunctionLiteralNode node);
+    void visit(ToyReturnNode node);
+    void visit(ToyWriteLocalVariableNode node);
+    void visit(ToyReadArgumentNode node);
+    void visit(ToyReadLocalVariableNode node);
     
-    T visit(ToyReadPropertyNode node);
-    T visit(ToyWritePropertyNode node);
+    void visit(ToyReadPropertyNode node);
+    void visit(ToyWritePropertyNode node);
 
     Program build(ToyStatementNode node);
 }

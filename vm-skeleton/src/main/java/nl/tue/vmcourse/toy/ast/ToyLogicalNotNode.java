@@ -22,8 +22,8 @@ public class ToyLogicalNotNode extends ToyExpressionNode {
     }
 
     @Override
-    public <R> R accept(IAstVisitor<R> visitor) {
-        return visitor.visit(this);
+    public void accept(IAstVisitor visitor) {
+        visitor.visit(this);
     }
 
     public ToyExpressionNode getToyLessOrEqualNode() {

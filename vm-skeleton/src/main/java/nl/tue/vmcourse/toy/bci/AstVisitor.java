@@ -37,7 +37,7 @@ import nl.tue.vmcourse.toy.ast.ToyWhileNode;
 import nl.tue.vmcourse.toy.ast.ToyWriteLocalVariableNode;
 import nl.tue.vmcourse.toy.ast.ToyWritePropertyNode;
 
-public class AstVisitor implements IAstVisitor<Void> {
+public class AstVisitor implements IAstVisitor {
     private ProgramBuilder programBuilder = new ProgramBuilder();
     private final Deque<LoopContext> loopStack = new ArrayDeque<>();
 
@@ -57,90 +57,90 @@ public class AstVisitor implements IAstVisitor<Void> {
     }
 
     @Override
-    public Void visit(ToyBlockNode node) {
+    public void visit(ToyBlockNode node) {
         if(node.getChildren().size() > 0) {
                 for(ToyAstNode n : node.getChildren()) {
                     n.accept(this);
                 }
             }
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyAddNode node) {
+    public void visit(ToyAddNode node) {
         node.getLeftUnboxed().accept(this);
         node.getRightUnboxed().accept(this);
         programBuilder.emit(Opcode.ADD);
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToySubNode node) {
+    public void visit(ToySubNode node) {
         node.getLeftUnboxed().accept(this);
         node.getRightUnboxed().accept(this);
         programBuilder.emit(Opcode.SUB);
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyMulNode node) {
+    public void visit(ToyMulNode node) {
         node.getLeftUnboxed().accept(this);
         node.getRightUnboxed().accept(this);
         programBuilder.emit(Opcode.MUL);
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyDivNode node) {
+    public void visit(ToyDivNode node) {
         node.getLeftUnboxed().accept(this);
         node.getRightUnboxed().accept(this);
         programBuilder.emit(Opcode.DIV);
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyParenExpressionNode node) {
+    public void visit(ToyParenExpressionNode node) {
         node.getExpressionNode().accept(this);
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyBigIntegerLiteralNode node) {
+    public void visit(ToyBigIntegerLiteralNode node) {
         int index = programBuilder.addConst(node.getBigInteger());
         programBuilder.emit(Opcode.ICONST);
         programBuilder.emitInt(index);
         
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyBooleanLiteralNode node) {
+    public void visit(ToyBooleanLiteralNode node) {
         int index = programBuilder.addConst(node.getValue());
         programBuilder.emit(Opcode.BCONST);
         programBuilder.emitInt(index);
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyLongLiteralNode node) {
+    public void visit(ToyLongLiteralNode node) {
         int index = programBuilder.addConst(node.getValue());
         programBuilder.emit(Opcode.ICONST);
         programBuilder.emitInt(index);
 
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyStringLiteralNode node) {
+    public void visit(ToyStringLiteralNode node) {
         int index = programBuilder.addConst(node.getValue());
         programBuilder.emit(Opcode.ICONST);
         programBuilder.emitInt(index);
 
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyWhileNode node) {
+    public void visit(ToyWhileNode node) {
         Label labelStart = programBuilder.newLabel();
         Label labelEnd = programBuilder.newLabel();
 
@@ -155,44 +155,44 @@ public class AstVisitor implements IAstVisitor<Void> {
         programBuilder.mark(labelEnd);
         loopStack.pop();
 
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyBreakNode node) {
+    public void visit(ToyBreakNode node) {
         LoopContext loop = loopStack.peek();
         if(loop == null) {
             throw new IllegalStateException();
         }
         programBuilder.emitJump(Opcode.JMP, loop.end);
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyContinueNode node) {
+    public void visit(ToyContinueNode node) {
         LoopContext loop = loopStack.peek();
         if(loop == null) {
             throw new IllegalStateException();
         }
         programBuilder.emitJump(Opcode.JMP, loop.start);
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyUnaryMinNode node) {
+    public void visit(ToyUnaryMinNode node) {
         // TODO: Implement unaryMin node
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyLogicalNotNode node) {
+    public void visit(ToyLogicalNotNode node) {
         node.getToyLessOrEqualNode().accept(this);
         programBuilder.emit(Opcode.NEG);
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyLogicalOrNode node) {
+    public void visit(ToyLogicalOrNode node) {
         Label labelTrue = programBuilder.newLabel();
         Label labelEnd = programBuilder.newLabel();
 
@@ -215,11 +215,11 @@ public class AstVisitor implements IAstVisitor<Void> {
 
         programBuilder.mark(labelEnd);
 
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyLogicalAndNode node) {
+    public void visit(ToyLogicalAndNode node) {
         Label labelFalse = programBuilder.newLabel();
         Label labelEnd = programBuilder.newLabel();
         
@@ -242,33 +242,33 @@ public class AstVisitor implements IAstVisitor<Void> {
 
         programBuilder.mark(labelEnd);
 
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyEqualNode node) {
+    public void visit(ToyEqualNode node) {
         node.getLeftUnboxed().accept(this);
         node.getRightUnboxed().accept(this);
         programBuilder.emit(Opcode.EQ);
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyLessOrEqualNode node) {
+    public void visit(ToyLessOrEqualNode node) {
         // TODO: Implement LE node
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyLessThanNode node) {
+    public void visit(ToyLessThanNode node) {
         node.getLeftUnboxed().accept(this);
         node.getRightUnboxed().accept(this);
         programBuilder.emit(Opcode.LT);
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyIfNode node) {
+    public void visit(ToyIfNode node) {
         node.getConditionNode().accept(this);
         Label labelElse = programBuilder.newLabel();
         Label labelEnd = programBuilder.newLabel();
@@ -282,17 +282,17 @@ public class AstVisitor implements IAstVisitor<Void> {
         }
         programBuilder.mark(labelEnd);
 
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyUnboxNode node) {
+    public void visit(ToyUnboxNode node) {
         node.getLeftNode().accept(this);
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyInvokeNode node) {
+    public void visit(ToyInvokeNode node) {
         for(ToyExpressionNode expressionNode : node.getToyExpressionNodes()) {
             expressionNode.accept(this);
         }
@@ -301,18 +301,18 @@ public class AstVisitor implements IAstVisitor<Void> {
         node.getFunctionNode().accept(this);
         programBuilder.emitInt(node.getToyExpressionNodes().length);
 
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyFunctionLiteralNode node) {
+    public void visit(ToyFunctionLiteralNode node) {
         int funcIndex = programBuilder.addConst(node.getName());
         programBuilder.emitInt(funcIndex);
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyReturnNode node) {
+    public void visit(ToyReturnNode node) {
         if(node.getValueNode() == null) {
             int index = programBuilder.addConst(null);
             programBuilder.emit(Opcode.ICONST);
@@ -322,50 +322,50 @@ public class AstVisitor implements IAstVisitor<Void> {
         }
 
         programBuilder.emit(Opcode.RET);
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyWriteLocalVariableNode node) {
+    public void visit(ToyWriteLocalVariableNode node) {
         node.getValueNode().accept(this);
         programBuilder.emit(Opcode.STORE);
         programBuilder.emitInt(node.getFrameSlot());
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyReadArgumentNode node) {
+    public void visit(ToyReadArgumentNode node) {
         programBuilder.emit(Opcode.LOAD_ARG);
         programBuilder.emitInt(node.getParameterCount());
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyReadLocalVariableNode node) {
+    public void visit(ToyReadLocalVariableNode node) {
         programBuilder.emit(Opcode.LOAD);
         programBuilder.emitInt(node.getFrameSlot());
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyReadPropertyNode node) {
+    public void visit(ToyReadPropertyNode node) {
         // TODO: Implement ReadProperty node
         // throw new UnsupportedOperationException("Unimplemented method 'visit'");
         node.getNameNode().accept(this);
         programBuilder.emit(Opcode.READ);
         programBuilder.emitInt(((ToyReadLocalVariableNode)node.getReceiverNode()).getFrameSlot());
 
-        return null;
+        
     }
 
     @Override
-    public Void visit(ToyWritePropertyNode node) {
+    public void visit(ToyWritePropertyNode node) {
         node.getNameNode().accept(this);
         node.getValueNode().accept(this);
 
         programBuilder.emit(Opcode.WRITE);
         programBuilder.emitInt(((ToyReadLocalVariableNode)node.getReceiverNode()).getFrameSlot());
         
-        return null;
+        
     }
 }

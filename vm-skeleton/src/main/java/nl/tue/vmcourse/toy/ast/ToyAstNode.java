@@ -7,5 +7,5 @@ import java.util.List;
 
 public abstract class ToyAstNode extends ToyNode {
     public abstract List<ToyAstNode> getChildren();
-    public abstract <R> R accept(IAstVisitor<R> visitor);
+    public abstract void accept(IAstVisitor visitor);
 }

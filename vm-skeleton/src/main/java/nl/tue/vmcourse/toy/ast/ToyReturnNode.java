@@ -17,8 +17,8 @@ public class ToyReturnNode extends ToyStatementNode {
     }
 
     @Override
-    public <R> R accept(IAstVisitor<R> visitor) {
-        return visitor.visit(this);
+    public void accept(IAstVisitor visitor) {
+        visitor.visit(this);
     }
 
     public ToyExpressionNode getValueNode() {
