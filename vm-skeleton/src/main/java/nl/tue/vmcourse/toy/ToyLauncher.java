@@ -5,8 +5,11 @@ import nl.tue.vmcourse.toy.interpreter.ToySyntaxErrorException;
 import nl.tue.vmcourse.toy.lang.FrameDescriptor;
 import nl.tue.vmcourse.toy.lang.RootCallTarget;
 import nl.tue.vmcourse.toy.lang.VirtualFrame;
+import nl.tue.vmcourse.toy.builtins.ArrayGetSizeBuiltin;
+import nl.tue.vmcourse.toy.builtins.HelloEqualsWorldBuiltin;
 import nl.tue.vmcourse.toy.builtins.NewObject;
 import nl.tue.vmcourse.toy.builtins.PrintBuiltin;
+import nl.tue.vmcourse.toy.builtins.StackTraceBuiltin;
 import nl.tue.vmcourse.toy.interpreter.ToyAbstractFunctionBody;
 import nl.tue.vmcourse.toy.interpreter.ToyNodeFactory;
 import nl.tue.vmcourse.toy.interpreter.ToyRootNode;
@@ -93,19 +96,29 @@ public class ToyLauncher {
         Map<String, RootCallTarget> allFunctions = factory.getAllFunctions();
         if (!allFunctions.isEmpty() && allFunctions.containsKey("main")) {
             RootCallTarget mainFunction = allFunctions.get("main");
-            registerBuiltin(allFunctions, new PrintBuiltin(), "print");
-            registerBuiltin(allFunctions, new NewObject(), "new");
-            // TODO register builtins, initialize global scope, ...
-            return mainFunction.invoke();
+            registerAllBuiltIns(allFunctions);
+            try {
+                return mainFunction.invoke();
+            } catch(RuntimeException e) {
+                System.err.println(e.getMessage());
+            }
+            
         }
 
         return null;
     }
 
+    private static void registerAllBuiltIns(Map<String, RootCallTarget> allFunctions) {
+        registerBuiltin(allFunctions, new PrintBuiltin(), "println");
+        registerBuiltin(allFunctions, new NewObject(), "new");
+        registerBuiltin(allFunctions, new StackTraceBuiltin(), "stacktrace");
+        registerBuiltin(allFunctions, new HelloEqualsWorldBuiltin(), "helloEqualsWorld");
+        registerBuiltin(allFunctions, new ArrayGetSizeBuiltin(), "getSize");
+    }
+
     private static void registerBuiltin(Map<String, RootCallTarget> allFunctions, ToyAbstractFunctionBody builtin, String functionName) {
         ToyRootNode rootNode = new ToyRootNode(FrameDescriptor.newBuilder().build(), builtin, functionName);
-        RootCallTarget callTarget = new RootCallTarget(rootNode);
-        allFunctions.put(rootNode.getFunctionName(), callTarget);
+        allFunctions.put(rootNode.getFunctionName(), rootNode.getCallTarget());
     }
 
     public static void main(String[] args) throws IOException {

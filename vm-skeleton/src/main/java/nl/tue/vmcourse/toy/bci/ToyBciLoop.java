@@ -3,10 +3,16 @@ package nl.tue.vmcourse.toy.bci;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import nl.tue.vmcourse.toy.ToyLauncher;
 import nl.tue.vmcourse.toy.interpreter.ToyAbstractFunctionBody;
+import nl.tue.vmcourse.toy.interpreter.ToyRootNode;
+import nl.tue.vmcourse.toy.lang.CallFrame;
+import nl.tue.vmcourse.toy.lang.FrameDescriptor;
 import nl.tue.vmcourse.toy.lang.RootCallTarget;
 import nl.tue.vmcourse.toy.lang.ToyObject;
 import nl.tue.vmcourse.toy.lang.VirtualFrame;
@@ -20,9 +26,10 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
     private final JITCompiler compiler;
     private final Map<String, RootCallTarget> allFunctions;
     private final RootCallTarget[] functionCache;
-    private Object[] locals = new Object[1];
+    private Object[] locals;
     private final Deque<Object> programStack = new ArrayDeque<>();
     private short slotCache[];
+    private Deque<ToyRootNode> callStack = new ArrayDeque<>();
 
     public ToyBciLoop(Program program, Map<String, RootCallTarget> allFunctions) {
         this.program = program;
@@ -30,6 +37,8 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
         this.allFunctions = allFunctions;
         this.slotCache = new short[program.code.length];
         this.functionCache = new RootCallTarget[program.code.length];
+        this.callStack = new ArrayDeque<>();
+        
     }
 
     public Object execute(VirtualFrame frame) {
@@ -39,6 +48,10 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
         int intRegister1 = 41;
         int intRegister2 = 1;
 
+        CallFrame cf = RootCallTarget.peekTopFrame();
+        FrameDescriptor fd = cf.frameDescriptor;
+        this.locals = new Object[fd.getFrameSlots().size()];
+        cf.attachLocals(this.locals);
 
         if(ToyLauncher.DUMP_BYTECODE) {
             System.out.println("BYTECODE: ");
@@ -47,7 +60,7 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
             } 
             System.out.print("\n");
         }
-
+        try {
         while (pc < program.code.length) {
             executions++;
             int op = (program.code[pc++]) & 0xFF;
@@ -71,27 +84,25 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                     break;
                 }
                 case CALL -> {
-                    int functionIndex = readInt(program.code, pc);
-                    pc+=4;
                     int argCount = readInt(program.code, pc);
                     Object[] args = new Object[argCount];
                     for(int i = argCount - 1; i >= 0; i--) {
                         args[i] = programStack.pop();
                     }
-                    String functionName = (String)program.constants[functionIndex];
+                    String functionName = programStack.pop().toString();
                     RootCallTarget function = allFunctions.get(functionName);
                     Object returned = function.invoke(args);
                     if(returned != null) {
                         programStack.push(returned);
                     }
 
-                    functionCache[pc - 5] = function;
+                    functionCache[pc - 1] = function;
                     if(functionName.equals("new")) {
-                        program.code[pc - 5] = Opcode.CALL_NEW.code;
+                        program.code[pc - 1] = Opcode.CALL_NEW.code;
                     } else if (functionName.equals("print") && argCount > 0) {
-                        program.code[pc - 5] = Opcode.CALL_PRINT.code;
+                        program.code[pc - 1] = Opcode.CALL_PRINT.code;
                     } else {
-                        program.code[pc - 5] = Opcode.CALL_QUICK.code;
+                        program.code[pc - 1] = Opcode.CALL_QUICK.code;
                     }
 
                     pc+=4;
@@ -100,17 +111,16 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                 case CALL_NEW -> {
                     Object returned = functionCache[pc - 1].invoke(programStack.pop());
                     programStack.push(returned);
-                    pc += 8;
+                    pc += 4;
                     break;
                 }
                 case CALL_PRINT -> {
                     functionCache[pc - 1].invoke(programStack.pop());
-                    pc += 8;
+                    pc += 4;
                     break;
                 }
                 case CALL_QUICK -> {
                     RootCallTarget function = functionCache[pc - 1];
-                    pc+=4;
                     int argCount = readInt(program.code, pc);
                     Object[] args = new Object[argCount];
                     pc+=4;
@@ -136,7 +146,7 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                         String result = (String)left + (String) right;
                         programStack.push(result);
                     } else {
-                        addGeneric(left, right);
+                        programStack.push(addGeneric(left, right));
                     }
                     break;
                 }
@@ -284,22 +294,56 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                     break;
                 }
                 case WRITE -> {
-                    int objIndex = readInt(program.code, pc);
-                    pc += 4;
-                    ToyObject obj = (ToyObject)locals[objIndex];
+                    // int objIndex = readInt(program.code, pc);
+                    // pc += 4;
+                    // ToyObject obj = (ToyObject)locals[objIndex];
                     Object value = programStack.pop();
-                    String key = programStack.pop().toString();
-                    obj.setProperty(key, value);
-                    break;
+                    try {
+                        String key = programStack.pop().toString();
+                        ToyObject obj = (ToyObject)programStack.pop();
+                        obj.setProperty(key, value);
+                        programStack.push(obj);
+                        break;
+                    } catch(NullPointerException e) {
+                        throw new RuntimeException("TODO");
+                    }
                 }
                 case READ -> {
-                    int objIndex = readInt(program.code, pc);
-                    pc += 4;
-                    ToyObject obj = (ToyObject)locals[objIndex];
+                    // int objIndex = readInt(program.code, pc);
+                    // pc += 4;
+                    // ToyObject obj = (ToyObject)locals[objIndex];
                     Object property = programStack.pop().toString();
-                    Object value = obj.getValue(property.toString());
-                    programStack.push(value);
-                    break;
+                    try {
+                        ToyObject obj = (ToyObject)programStack.pop();
+                        Object value = obj.getValue(property.toString());
+                        programStack.push(value);
+                        break;
+                    } catch(NullPointerException e) {
+                        throw new RuntimeException("Undefined property: " + property);
+                    }
+                }
+                case RET -> {
+                    return programStack.pop();
+                }
+                case LT -> {
+                    Object right = programStack.pop();
+                    Object left = programStack.pop();
+
+                    if(!(left instanceof Long) || !(right instanceof Long)) {
+                        throw new RuntimeException("Both operands must be of type: Long");
+                    }
+
+                    programStack.push((long)left < (long)right);
+                }
+                case LE -> {
+                    Object right = programStack.pop();
+                    Object left = programStack.pop();
+
+                    if(!(left instanceof Long) || !(right instanceof Long)) {
+                        throw new RuntimeException("Both operands must be of type: Long");
+                    }
+
+                    programStack.push((long)left <= (long)right);
                 }
                 // case 42 -> {
                 //     if (executions <= JIT_COMPILATION_THRESHOLD) {
@@ -310,8 +354,12 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                 // }
                 // case 43 -> pc++;
                 // case ..
-                default -> throw new RuntimeException("TODO");
+                default -> throw new RuntimeException("PC: " + pc);
             }
+        }} catch(Exception e) {
+            System.err.println("FUNCTION: " + cf.functionName);
+            System.err.println("PC: " + pc + ", EX: " + executions);
+            System.err.println(e.getMessage());
         }
         return null;
     }

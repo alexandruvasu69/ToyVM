@@ -26,4 +26,7 @@ public class FrameDescriptor {
             return descriptor.frameSlots.get(name);
         }
     }
+    public Map<String, Integer> getFrameSlots() {
+        return new HashMap<>(frameSlots);
+    }
 }

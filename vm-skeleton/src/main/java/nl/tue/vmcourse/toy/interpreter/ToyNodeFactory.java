@@ -126,8 +126,6 @@ public class ToyNodeFactory {
 
             final ToyAbstractFunctionBody functionBodyNode = AstToBciAssembler.build(methodBlock, allFunctions);
 
-            
-
             final ToyRootNode rootNode = new ToyRootNode(frameDescriptorBuilder.build(), functionBodyNode, functionName);
             allFunctions.put(functionName, rootNode.getCallTarget());
         }

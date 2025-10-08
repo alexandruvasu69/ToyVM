@@ -63,7 +63,6 @@ public class AstVisitor implements IAstVisitor {
                     n.accept(this);
                 }
             }
-        
     }
 
     @Override
@@ -71,7 +70,6 @@ public class AstVisitor implements IAstVisitor {
         node.getLeftUnboxed().accept(this);
         node.getRightUnboxed().accept(this);
         programBuilder.emit(Opcode.ADD);
-        
     }
 
     @Override
@@ -79,7 +77,6 @@ public class AstVisitor implements IAstVisitor {
         node.getLeftUnboxed().accept(this);
         node.getRightUnboxed().accept(this);
         programBuilder.emit(Opcode.SUB);
-        
     }
 
     @Override
@@ -87,7 +84,6 @@ public class AstVisitor implements IAstVisitor {
         node.getLeftUnboxed().accept(this);
         node.getRightUnboxed().accept(this);
         programBuilder.emit(Opcode.MUL);
-        
     }
 
     @Override
@@ -95,13 +91,11 @@ public class AstVisitor implements IAstVisitor {
         node.getLeftUnboxed().accept(this);
         node.getRightUnboxed().accept(this);
         programBuilder.emit(Opcode.DIV);
-        
     }
 
     @Override
     public void visit(ToyParenExpressionNode node) {
         node.getExpressionNode().accept(this);
-        
     }
 
     @Override
@@ -109,8 +103,6 @@ public class AstVisitor implements IAstVisitor {
         int index = programBuilder.addConst(node.getBigInteger());
         programBuilder.emit(Opcode.ICONST);
         programBuilder.emitInt(index);
-        
-        
     }
 
     @Override
@@ -118,7 +110,6 @@ public class AstVisitor implements IAstVisitor {
         int index = programBuilder.addConst(node.getValue());
         programBuilder.emit(Opcode.BCONST);
         programBuilder.emitInt(index);
-        
     }
 
     @Override
@@ -126,8 +117,6 @@ public class AstVisitor implements IAstVisitor {
         int index = programBuilder.addConst(node.getValue());
         programBuilder.emit(Opcode.ICONST);
         programBuilder.emitInt(index);
-
-        
     }
 
     @Override
@@ -135,8 +124,6 @@ public class AstVisitor implements IAstVisitor {
         int index = programBuilder.addConst(node.getValue());
         programBuilder.emit(Opcode.ICONST);
         programBuilder.emitInt(index);
-
-        
     }
 
     @Override
@@ -154,8 +141,6 @@ public class AstVisitor implements IAstVisitor {
         programBuilder.emitJump(Opcode.JMP, labelStart);
         programBuilder.mark(labelEnd);
         loopStack.pop();
-
-        
     }
 
     @Override
@@ -165,7 +150,6 @@ public class AstVisitor implements IAstVisitor {
             throw new IllegalStateException();
         }
         programBuilder.emitJump(Opcode.JMP, loop.end);
-        
     }
 
     @Override
@@ -175,20 +159,17 @@ public class AstVisitor implements IAstVisitor {
             throw new IllegalStateException();
         }
         programBuilder.emitJump(Opcode.JMP, loop.start);
-        
     }
 
     @Override
     public void visit(ToyUnaryMinNode node) {
         // TODO: Implement unaryMin node
-        
     }
 
     @Override
     public void visit(ToyLogicalNotNode node) {
         node.getToyLessOrEqualNode().accept(this);
         programBuilder.emit(Opcode.NEG);
-        
     }
 
     @Override
@@ -214,8 +195,6 @@ public class AstVisitor implements IAstVisitor {
         programBuilder.emitInt(index);
 
         programBuilder.mark(labelEnd);
-
-        
     }
 
     @Override
@@ -241,8 +220,6 @@ public class AstVisitor implements IAstVisitor {
         programBuilder.emitInt(index);
 
         programBuilder.mark(labelEnd);
-
-        
     }
 
     @Override
@@ -250,13 +227,13 @@ public class AstVisitor implements IAstVisitor {
         node.getLeftUnboxed().accept(this);
         node.getRightUnboxed().accept(this);
         programBuilder.emit(Opcode.EQ);
-        
     }
 
     @Override
     public void visit(ToyLessOrEqualNode node) {
-        // TODO: Implement LE node
-        
+        node.getLeftUnboxed().accept(this);
+        node.getRightUnboxed().accept(this);
+        programBuilder.emit(Opcode.LE);
     }
 
     @Override
@@ -264,7 +241,6 @@ public class AstVisitor implements IAstVisitor {
         node.getLeftUnboxed().accept(this);
         node.getRightUnboxed().accept(this);
         programBuilder.emit(Opcode.LT);
-        
     }
 
     @Override
@@ -281,34 +257,30 @@ public class AstVisitor implements IAstVisitor {
             node.getElsePartNode().accept(this);
         }
         programBuilder.mark(labelEnd);
-
-        
     }
 
     @Override
     public void visit(ToyUnboxNode node) {
         node.getLeftNode().accept(this);
-        
     }
 
     @Override
     public void visit(ToyInvokeNode node) {
+        node.getFunctionNode().accept(this);
+
         for(ToyExpressionNode expressionNode : node.getToyExpressionNodes()) {
             expressionNode.accept(this);
         }
         
         programBuilder.emit(Opcode.CALL);
-        node.getFunctionNode().accept(this);
         programBuilder.emitInt(node.getToyExpressionNodes().length);
-
-        
     }
 
     @Override
     public void visit(ToyFunctionLiteralNode node) {
         int funcIndex = programBuilder.addConst(node.getName());
+        programBuilder.emit(Opcode.SCONST);
         programBuilder.emitInt(funcIndex);
-        
     }
 
     @Override
@@ -322,7 +294,6 @@ public class AstVisitor implements IAstVisitor {
         }
 
         programBuilder.emit(Opcode.RET);
-        
     }
 
     @Override
@@ -330,42 +301,33 @@ public class AstVisitor implements IAstVisitor {
         node.getValueNode().accept(this);
         programBuilder.emit(Opcode.STORE);
         programBuilder.emitInt(node.getFrameSlot());
-        
     }
 
     @Override
     public void visit(ToyReadArgumentNode node) {
         programBuilder.emit(Opcode.LOAD_ARG);
         programBuilder.emitInt(node.getParameterCount());
-        
     }
 
     @Override
     public void visit(ToyReadLocalVariableNode node) {
         programBuilder.emit(Opcode.LOAD);
         programBuilder.emitInt(node.getFrameSlot());
-        
     }
 
     @Override
     public void visit(ToyReadPropertyNode node) {
-        // TODO: Implement ReadProperty node
-        // throw new UnsupportedOperationException("Unimplemented method 'visit'");
+        node.getReceiverNode().accept(this);
         node.getNameNode().accept(this);
         programBuilder.emit(Opcode.READ);
-        programBuilder.emitInt(((ToyReadLocalVariableNode)node.getReceiverNode()).getFrameSlot());
-
-        
     }
 
     @Override
     public void visit(ToyWritePropertyNode node) {
+        node.getReceiverNode().accept(this);
         node.getNameNode().accept(this);
         node.getValueNode().accept(this);
 
         programBuilder.emit(Opcode.WRITE);
-        programBuilder.emitInt(((ToyReadLocalVariableNode)node.getReceiverNode()).getFrameSlot());
-        
-        
     }
 }

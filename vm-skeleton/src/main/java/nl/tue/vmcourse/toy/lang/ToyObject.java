@@ -13,4 +13,8 @@ public class ToyObject {
     public void setProperty(String property, Object value) {
         storage.put(property, value);
     }
+
+    public int getSize() {
+        return this.storage.size();
+    }
 }
