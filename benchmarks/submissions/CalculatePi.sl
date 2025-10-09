@@ -26,7 +26,7 @@ function main() {
 
     avg = time / (ITERATIONS - MEASURE_FROM);
 
-    // println(NAME + ": " + avg);
+    println(NAME + ": " + avg);
 
 }
 
