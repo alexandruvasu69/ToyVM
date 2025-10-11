@@ -1,6 +1,7 @@
 package nl.tue.vmcourse.toy.builtins;
 
 import nl.tue.vmcourse.toy.interpreter.ToyAbstractFunctionBody;
+import nl.tue.vmcourse.toy.lang.NullValue;
 import nl.tue.vmcourse.toy.lang.VirtualFrame;
 
 public class PrintBuiltin extends ToyAbstractFunctionBody {
@@ -12,11 +13,11 @@ public class PrintBuiltin extends ToyAbstractFunctionBody {
     @Override
     public Object execute(VirtualFrame frame) {
         Object[] arguments = frame.getArguments();
-        if(arguments != null && arguments.length > 0) {
+        if(arguments != null && arguments.length > 0 && NullValue.getUnboxed(arguments[0]) != null) {
             this.invoke(arguments[0].toString());
             return null;
         } else {
-            this.invoke(null);
+            this.invoke("NULL");
             return null;
         }
     }

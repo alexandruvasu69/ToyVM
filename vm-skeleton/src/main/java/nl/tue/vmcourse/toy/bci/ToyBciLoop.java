@@ -3,11 +3,9 @@ package nl.tue.vmcourse.toy.bci;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.Map.Entry;
+
+import org.codehaus.commons.nullanalysis.Nullable;
 
 import nl.tue.vmcourse.toy.ToyLauncher;
 import nl.tue.vmcourse.toy.interpreter.ToyAbstractFunctionBody;
@@ -102,11 +100,7 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                     try {
                         RootCallTarget function = (RootCallTarget)programStack.pop();
                         Object returned = function.invoke(args);
-                        if(returned != null) {
-                            programStack.push(returned);
-                        } else {
-                            programStack.push(NullValue.INSTANCE);
-                        }
+                        programStack.push(NullValue.boxValue(returned));
 
                         String functionName = function.getRootNode().getFunctionName();
 
@@ -239,6 +233,7 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                     
                     if(left.getClass() != right.getClass()) {
                         programStack.push(false);
+                        break;
                     }
 
                     programStack.push((left.toString()).equals(right.toString()));
@@ -303,10 +298,11 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                         ToyObject obj = (ToyObject)programStack.pop();
                         obj.setProperty(key, value);
                         programStack.push(obj);
-                        break;
                     } catch(NullPointerException e) {
                         throw new RuntimeException("TODO");
                     }
+
+                    break;
                 }
                 case READ -> {
                     // int objIndex = readInt(program.code, pc);
@@ -317,10 +313,11 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                         ToyObject obj = (ToyObject)programStack.pop();
                         Object value = obj.getValue(property.toString());
                         programStack.push(value);
-                        break;
                     } catch(NullPointerException e) {
                         throw new RuntimeException("Undefined property: " + property);
                     }
+
+                    break;
                 }
                 case RET -> {
                     return programStack.pop();
@@ -334,6 +331,7 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                     }
 
                     programStack.push((long)left < (long)right);
+                    break;
                 }
                 case LE -> {
                     Object right = programStack.pop();
@@ -344,6 +342,7 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                     }
 
                     programStack.push((long)left <= (long)right);
+                    break;
                 }
                 // case 42 -> {
                 //     if (executions <= JIT_COMPILATION_THRESHOLD) {
