@@ -165,7 +165,13 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                     Object left = programStack.pop();
                     
                     if(left instanceof Long && right instanceof Long) {
-                        programStack.push((Long)left * (Long)right);
+                        try {
+                            Long res = Math.multiplyExact((Long)left, (Long)right);
+                            programStack.push(res);
+                        } catch(ArithmeticException e) {
+                            BigInteger res = BigInteger.valueOf((Long)left).multiply(BigInteger.valueOf((Long)right));
+                            programStack.push(res);
+                        }
                     } else {
                         throw new RuntimeException("TODO");
                     }
