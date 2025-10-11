@@ -87,8 +87,12 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                 case FCONST -> {
                     int index = readInt(program.code, pc);
                     String functionName = (String)program.constants[index];
-                    RootCallTarget function = allFunctions.get(functionName);
-                    programStack.push(function);
+                    try {
+                        RootCallTarget function = allFunctions.get(functionName);
+                        programStack.push(function);
+                    } catch(NullPointerException e) {
+                        programStack.push(NullValue.INSTANCE);
+                    }
                     pc+=4;
                     break;
                 }
@@ -344,23 +348,34 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                 case LT -> {
                     Object right = programStack.pop();
                     Object left = programStack.pop();
+                    if(left instanceof Long && right instanceof Long) {
+                        programStack.push((long)left < (long)right);
+                    } else if((left instanceof BigInteger || left instanceof Long) && (right instanceof BigInteger || right instanceof Long)) {
+                        BigInteger a = (left instanceof BigInteger) ? (BigInteger)left : BigInteger.valueOf((Long)left);
+                        BigInteger b = (right instanceof BigInteger) ? (BigInteger)right : BigInteger.valueOf((Long)right);
 
-                    if(!(left instanceof Long) || !(right instanceof Long)) {
-                        throw new RuntimeException("Both operands must be of type: Long");
+                        programStack.push((a.compareTo(b) < 0) ? true : false);
+                    } else {
+                        throw new RuntimeException("Value types not compatible for comparison");
                     }
-
-                    programStack.push((long)left < (long)right);
+                    
                     break;
                 }
                 case LE -> {
                     Object right = programStack.pop();
                     Object left = programStack.pop();
 
-                    if(!(left instanceof Long) || !(right instanceof Long)) {
-                        throw new RuntimeException("Both operands must be of type: Long");
+                    if(left instanceof Long && right instanceof Long) {
+                        programStack.push((long)left <= (long)right);
+                    } else if((left instanceof BigInteger || left instanceof Long) && (right instanceof BigInteger || right instanceof Long)) {
+                        BigInteger a = (left instanceof BigInteger) ? (BigInteger)left : BigInteger.valueOf((Long)left);
+                        BigInteger b = (right instanceof BigInteger) ? (BigInteger)right : BigInteger.valueOf((Long)right);
+
+                        programStack.push((a.compareTo(b) <= 0) ? true : false);
+                    } else {
+                        throw new RuntimeException("Value types not compatible for comparison");
                     }
 
-                    programStack.push((long)left <= (long)right);
                     break;
                 }
                 // case 42 -> {
