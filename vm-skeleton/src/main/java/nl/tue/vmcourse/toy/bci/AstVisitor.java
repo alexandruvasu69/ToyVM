@@ -122,7 +122,7 @@ public class AstVisitor implements IAstVisitor {
     @Override
     public void visit(ToyStringLiteralNode node) {
         int index = programBuilder.addConst(node.getValue());
-        programBuilder.emit(Opcode.ICONST);
+        programBuilder.emit(Opcode.SCONST);
         programBuilder.emitInt(index);
     }
 

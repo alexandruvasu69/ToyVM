@@ -152,7 +152,10 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                     if(left instanceof Long && right instanceof Long) {
                         programStack.push((Long)left + (Long)right);
                     } else {
+                        programStack.push(left);
+                        programStack.push(right);
                         program.code[pc - 1] = Opcode.ADD.code;
+                        pc--;
                     }
 
                     break;
