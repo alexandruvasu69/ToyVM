@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -13,6 +14,7 @@ import nl.tue.vmcourse.toy.interpreter.ToyAbstractFunctionBody;
 import nl.tue.vmcourse.toy.interpreter.ToyRootNode;
 import nl.tue.vmcourse.toy.lang.CallFrame;
 import nl.tue.vmcourse.toy.lang.FrameDescriptor;
+import nl.tue.vmcourse.toy.lang.NullValue;
 import nl.tue.vmcourse.toy.lang.RootCallTarget;
 import nl.tue.vmcourse.toy.lang.ToyObject;
 import nl.tue.vmcourse.toy.lang.VirtualFrame;
@@ -83,26 +85,39 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                     pc+=4;
                     break;
                 }
+                case FCONST -> {
+                    int index = readInt(program.code, pc);
+                    String functionName = (String)program.constants[index];
+                    RootCallTarget function = allFunctions.get(functionName);
+                    programStack.push(function);
+                    pc+=4;
+                    break;
+                }
                 case CALL -> {
                     int argCount = readInt(program.code, pc);
                     Object[] args = new Object[argCount];
                     for(int i = argCount - 1; i >= 0; i--) {
                         args[i] = programStack.pop();
                     }
-                    String functionName = programStack.pop().toString();
-                    RootCallTarget function = allFunctions.get(functionName);
-                    Object returned = function.invoke(args);
-                    if(returned != null) {
-                        programStack.push(returned);
-                    }
+                    try {
+                        RootCallTarget function = (RootCallTarget)programStack.pop();
+                        Object returned = function.invoke(args);
+                        if(returned != null) {
+                            programStack.push(returned);
+                        } else {
+                            programStack.push(NullValue.INSTANCE);
+                        }
 
-                    functionCache[pc - 1] = function;
-                    if(functionName.equals("new")) {
-                        program.code[pc - 1] = Opcode.CALL_NEW.code;
-                    } else if (functionName.equals("print") && argCount > 0) {
-                        program.code[pc - 1] = Opcode.CALL_PRINT.code;
-                    } else {
-                        program.code[pc - 1] = Opcode.CALL_QUICK.code;
+                        String functionName = function.getRootNode().getFunctionName();
+
+                        functionCache[pc - 1] = function;
+                        if(functionName.equals("new")) {
+                            program.code[pc - 1] = Opcode.CALL_NEW.code;
+                        } else if (functionName.equals("print") && argCount > 0) {
+                            program.code[pc - 1] = Opcode.CALL_PRINT.code;
+                        }
+                    } catch(NullPointerException exception) {
+                        throw new RuntimeException("Nu such function: ");
                     }
 
                     pc+=4;
@@ -117,21 +132,6 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                 case CALL_PRINT -> {
                     functionCache[pc - 1].invoke(programStack.pop());
                     pc += 4;
-                    break;
-                }
-                case CALL_QUICK -> {
-                    RootCallTarget function = functionCache[pc - 1];
-                    int argCount = readInt(program.code, pc);
-                    Object[] args = new Object[argCount];
-                    pc+=4;
-                    for(int i = argCount - 1; i >= 0; i--) {
-                        args[i] = programStack.pop();
-                    }
-                    
-                    Object returned = function.invoke(args);
-                    if(returned != null) {
-                        programStack.push(returned);
-                    }
                     break;
                 }
                 case ADD -> {
@@ -352,14 +352,14 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                 //     objRegister = compiler.compileAndRun(intRegister1, intRegister2);
                 //     return "Hello from your friendly BCI! (and your JIT: " + objRegister + ")";
                 // }
-                // case 43 -> pc++;
+                // case 43 -> pc++;f
                 // case ..
                 default -> throw new RuntimeException("PC: " + pc);
             }
         }} catch(Exception e) {
             System.err.println("FUNCTION: " + cf.functionName);
             System.err.println("PC: " + pc + ", EX: " + executions);
-            System.err.println(e.getMessage());
+            System.err.println(e);
         }
         return null;
     }

@@ -7,9 +7,11 @@ import nl.tue.vmcourse.toy.lang.RootCallTarget;
 import nl.tue.vmcourse.toy.lang.VirtualFrame;
 import nl.tue.vmcourse.toy.builtins.ArrayGetSizeBuiltin;
 import nl.tue.vmcourse.toy.builtins.HelloEqualsWorldBuiltin;
+import nl.tue.vmcourse.toy.builtins.IsInstanceBuiltin;
 import nl.tue.vmcourse.toy.builtins.NewObject;
 import nl.tue.vmcourse.toy.builtins.PrintBuiltin;
 import nl.tue.vmcourse.toy.builtins.StackTraceBuiltin;
+import nl.tue.vmcourse.toy.builtins.TypeOfBuiltin;
 import nl.tue.vmcourse.toy.interpreter.ToyAbstractFunctionBody;
 import nl.tue.vmcourse.toy.interpreter.ToyNodeFactory;
 import nl.tue.vmcourse.toy.interpreter.ToyRootNode;
@@ -102,7 +104,6 @@ public class ToyLauncher {
             } catch(RuntimeException e) {
                 System.err.println(e.getMessage());
             }
-            
         }
 
         return null;
@@ -114,6 +115,8 @@ public class ToyLauncher {
         registerBuiltin(allFunctions, new StackTraceBuiltin(), "stacktrace");
         registerBuiltin(allFunctions, new HelloEqualsWorldBuiltin(), "helloEqualsWorld");
         registerBuiltin(allFunctions, new ArrayGetSizeBuiltin(), "getSize");
+        registerBuiltin(allFunctions, new TypeOfBuiltin(), "typeOf");
+        registerBuiltin(allFunctions, new IsInstanceBuiltin(), "isInstance");
     }
 
     private static void registerBuiltin(Map<String, RootCallTarget> allFunctions, ToyAbstractFunctionBody builtin, String functionName) {

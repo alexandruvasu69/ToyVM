@@ -4,6 +4,7 @@ public enum Opcode {
     ICONST(0x01, OperandKind.INT32),
     SCONST(0x02, OperandKind.INT32),
     BCONST(0x03, OperandKind.INT32),
+    FCONST(0x04, OperandKind.INT32),
 
     LOAD(0x10, OperandKind.INT32),
     STORE(0x11, OperandKind.INT32),

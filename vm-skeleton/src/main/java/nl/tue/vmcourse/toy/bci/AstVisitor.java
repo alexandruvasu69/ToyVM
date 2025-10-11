@@ -279,7 +279,7 @@ public class AstVisitor implements IAstVisitor {
     @Override
     public void visit(ToyFunctionLiteralNode node) {
         int funcIndex = programBuilder.addConst(node.getName());
-        programBuilder.emit(Opcode.SCONST);
+        programBuilder.emit(Opcode.FCONST);
         programBuilder.emitInt(funcIndex);
     }
 
