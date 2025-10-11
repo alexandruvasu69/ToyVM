@@ -18,8 +18,9 @@ public enum Opcode {
     SUB(0x22),
     DIV(0x23),
     NEG(0x24),
+    UMIN(0x25),
 
-    ADD_I(0x25),
+    ADD_I(0x26),
 
     EQ(0x30),
     LT(0x31),

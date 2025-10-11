@@ -163,7 +163,8 @@ public class AstVisitor implements IAstVisitor {
 
     @Override
     public void visit(ToyUnaryMinNode node) {
-        // TODO: Implement unaryMin node
+        node.getExp().accept(this);
+        programBuilder.emit(Opcode.UMIN);
     }
 
     @Override

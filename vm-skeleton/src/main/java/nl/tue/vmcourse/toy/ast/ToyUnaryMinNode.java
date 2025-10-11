@@ -21,4 +21,8 @@ public class ToyUnaryMinNode extends ToyExpressionNode {
     public void accept(IAstVisitor visitor) {
         visitor.visit(this);
     }
+
+    public ToyExpressionNode getExp() {
+        return exp;
+    }
 }

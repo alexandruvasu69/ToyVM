@@ -1,5 +1,6 @@
 package nl.tue.vmcourse.toy.bci;
 
+import java.math.BigInteger;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
@@ -287,6 +288,15 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                     }
                     programStack.push(!(boolean)operand);
                     break;
+                }
+                case UMIN -> {
+                    Object operand = programStack.pop();
+                    if(operand instanceof Long) {
+                        programStack.push(-(Long)operand);
+                        break;
+                    }
+                    
+                    throw new RuntimeException("Unary min only works on long values");
                 }
                 case WRITE -> {
                     // int objIndex = readInt(program.code, pc);
