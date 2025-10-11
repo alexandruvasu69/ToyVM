@@ -8,6 +8,7 @@ import nl.tue.vmcourse.toy.builtins.GetSizeBuiltin;
 import nl.tue.vmcourse.toy.builtins.HasSizeBuiltin;
 import nl.tue.vmcourse.toy.builtins.HelloEqualsWorldBuiltin;
 import nl.tue.vmcourse.toy.builtins.IsInstanceBuiltin;
+import nl.tue.vmcourse.toy.builtins.NanoTimeBuiltin;
 import nl.tue.vmcourse.toy.builtins.NewObject;
 import nl.tue.vmcourse.toy.builtins.PrintBuiltin;
 import nl.tue.vmcourse.toy.builtins.StackTraceBuiltin;
@@ -117,6 +118,7 @@ public class ToyLauncher {
         registerBuiltin(allFunctions, new IsInstanceBuiltin(), "isInstance");
         registerBuiltin(allFunctions, new HasSizeBuiltin(), "hasSize");
         registerBuiltin(allFunctions, new GetSizeBuiltin(), "getSize");
+        registerBuiltin(allFunctions, new NanoTimeBuiltin(), "nanoTime");
     }
 
     private static void registerBuiltin(Map<String, RootCallTarget> allFunctions, ToyAbstractFunctionBody builtin, String functionName) {
