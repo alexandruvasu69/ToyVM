@@ -1,11 +1,11 @@
 package nl.tue.vmcourse.toy;
 
-import com.ibm.icu.impl.Assert;
 import nl.tue.vmcourse.toy.interpreter.ToySyntaxErrorException;
 import nl.tue.vmcourse.toy.lang.FrameDescriptor;
 import nl.tue.vmcourse.toy.lang.RootCallTarget;
-import nl.tue.vmcourse.toy.lang.VirtualFrame;
 import nl.tue.vmcourse.toy.builtins.ArrayGetSizeBuiltin;
+import nl.tue.vmcourse.toy.builtins.GetSizeBuiltin;
+import nl.tue.vmcourse.toy.builtins.HasSizeBuiltin;
 import nl.tue.vmcourse.toy.builtins.HelloEqualsWorldBuiltin;
 import nl.tue.vmcourse.toy.builtins.IsInstanceBuiltin;
 import nl.tue.vmcourse.toy.builtins.NewObject;
@@ -21,9 +21,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Interval;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.StringJoiner;
 
 public class ToyLauncher {
 
@@ -117,6 +115,8 @@ public class ToyLauncher {
         registerBuiltin(allFunctions, new ArrayGetSizeBuiltin(), "getSize");
         registerBuiltin(allFunctions, new TypeOfBuiltin(), "typeOf");
         registerBuiltin(allFunctions, new IsInstanceBuiltin(), "isInstance");
+        registerBuiltin(allFunctions, new HasSizeBuiltin(), "hasSize");
+        registerBuiltin(allFunctions, new GetSizeBuiltin(), "getSize");
     }
 
     private static void registerBuiltin(Map<String, RootCallTarget> allFunctions, ToyAbstractFunctionBody builtin, String functionName) {
