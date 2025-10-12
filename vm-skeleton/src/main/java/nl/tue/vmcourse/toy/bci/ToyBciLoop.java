@@ -27,7 +27,6 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
     private final JITCompiler compiler;
     private final Map<String, RootCallTarget> allFunctions;
     private final RootCallTarget[] functionCache;
-    private Object[] locals;
     private final Deque<Object> programStack = new ArrayDeque<>();
     private short slotCache[];
     private Deque<ToyRootNode> callStack = new ArrayDeque<>();
@@ -51,8 +50,8 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
 
         CallFrame cf = RootCallTarget.peekTopFrame();
         FrameDescriptor fd = cf.frameDescriptor;
-        this.locals = new Object[fd.getFrameSlots().size()];
-        cf.attachLocals(this.locals);
+        Object[] locals = new Object[fd.getFrameSlots().size()];
+        cf.attachLocals(locals);
 
         if(ToyLauncher.DUMP_BYTECODE) {
             System.out.println("BYTECODE: ");
@@ -264,8 +263,6 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                 case STORE -> {
                     int slot = readInt(program.code, pc);
 
-                    updateLocals(slot);
-
                     locals[slot] = programStack.pop();
                     slotCache[pc - 1] = (short)slot;
                     program.code[pc - 1] = Opcode.STORE_QUICK.code;
@@ -407,13 +404,5 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
         } 
 
         throw new RuntimeException("TODO");
-    }
-
-    private void updateLocals(int slot) {
-        if(slot <= this.locals.length - 1) {
-            return;
-        } else {
-            this.locals = Arrays.copyOf(this.locals, slot + 1);;
-        }
     }
 }
