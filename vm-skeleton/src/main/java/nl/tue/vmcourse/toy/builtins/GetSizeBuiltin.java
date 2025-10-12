@@ -6,15 +6,15 @@ import nl.tue.vmcourse.toy.lang.VirtualFrame;
 
 public class GetSizeBuiltin extends ToyAbstractFunctionBody {
 
-    public int invoke(Object obj) {
+    public long invoke(Object obj) {
         if(!(new HasSizeBuiltin().invoke(obj))) {
             throw new RuntimeException("Object doesn't have size");
         }
-
+        
         if(obj instanceof ToyObject) {
-            return ((ToyObject)obj).getSize();
+            return ((Integer)((ToyObject)obj).getSize()).longValue();
         } else {
-            return ((String)obj).length();
+            return ((Integer)((String)obj).length()).longValue();
         }
     }
 

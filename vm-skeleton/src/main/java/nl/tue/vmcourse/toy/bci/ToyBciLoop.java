@@ -27,7 +27,6 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
     private final JITCompiler compiler;
     private final Map<String, RootCallTarget> allFunctions;
     private final RootCallTarget[] functionCache;
-    private final Deque<Object> programStack = new ArrayDeque<>();
     private short slotCache[];
     private Deque<ToyRootNode> callStack = new ArrayDeque<>();
 
@@ -48,6 +47,8 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
         int intRegister1 = 41;
         int intRegister2 = 1;
 
+        final Deque<Object> programStack = new ArrayDeque<>();
+
         CallFrame cf = RootCallTarget.peekTopFrame();
         FrameDescriptor fd = cf.frameDescriptor;
         Object[] locals = new Object[fd.getFrameSlots().size()];
@@ -67,7 +68,7 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
             switch (Opcode.fromByte(op)) {
                 case ICONST -> {
                     int index = readInt(program.code, pc);
-                    programStack.push(program.constants[index]);
+                    programStack.push(NullValue.boxValue(program.constants[index]));
                     pc+=4;
                     break;
                 }

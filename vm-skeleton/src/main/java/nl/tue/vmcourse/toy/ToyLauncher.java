@@ -14,6 +14,8 @@ import nl.tue.vmcourse.toy.builtins.NanoTimeBuiltin;
 import nl.tue.vmcourse.toy.builtins.NewObject;
 import nl.tue.vmcourse.toy.builtins.PrintBuiltin;
 import nl.tue.vmcourse.toy.builtins.StackTraceBuiltin;
+import nl.tue.vmcourse.toy.builtins.StringSplitBuiltin;
+import nl.tue.vmcourse.toy.builtins.SubStringBuiltin;
 import nl.tue.vmcourse.toy.builtins.TypeOfBuiltin;
 import nl.tue.vmcourse.toy.interpreter.ToyAbstractFunctionBody;
 import nl.tue.vmcourse.toy.interpreter.ToyNodeFactory;
@@ -123,6 +125,8 @@ public class ToyLauncher {
         registerBuiltin(allFunctions, new NanoTimeBuiltin(), "nanoTime");
         registerBuiltin(allFunctions, new EvalBuiltin(allFunctions), "eval");
         registerBuiltin(allFunctions, new DefineFunctionBuiltin(allFunctions), "defineFunction");
+        registerBuiltin(allFunctions, new SubStringBuiltin(), "subString");
+        registerBuiltin(allFunctions, new StringSplitBuiltin(), "stringSplit");
     }
 
     private static void registerBuiltin(Map<String, RootCallTarget> allFunctions, ToyAbstractFunctionBody builtin, String functionName) {
