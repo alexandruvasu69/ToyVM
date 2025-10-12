@@ -44,6 +44,9 @@ public class EvalBuiltin extends ToyAbstractFunctionBody {
         parser.addErrorListener(new ToyLangParser.BailoutErrorListener());
         parser.toylanguage();
         allFunctions.putAll(factory.getAllFunctions());
+        Map<String, RootCallTarget> innerAllFunctions = factory.getAllFunctions();
+        innerAllFunctions.putAll(allFunctions);
+
         return null;
     }
 

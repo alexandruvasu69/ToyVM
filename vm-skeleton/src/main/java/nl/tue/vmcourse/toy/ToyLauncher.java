@@ -4,6 +4,7 @@ import nl.tue.vmcourse.toy.interpreter.ToySyntaxErrorException;
 import nl.tue.vmcourse.toy.lang.FrameDescriptor;
 import nl.tue.vmcourse.toy.lang.RootCallTarget;
 import nl.tue.vmcourse.toy.builtins.ArrayGetSizeBuiltin;
+import nl.tue.vmcourse.toy.builtins.DefineFunctionBuiltin;
 import nl.tue.vmcourse.toy.builtins.EvalBuiltin;
 import nl.tue.vmcourse.toy.builtins.GetSizeBuiltin;
 import nl.tue.vmcourse.toy.builtins.HasSizeBuiltin;
@@ -121,6 +122,7 @@ public class ToyLauncher {
         registerBuiltin(allFunctions, new GetSizeBuiltin(), "getSize");
         registerBuiltin(allFunctions, new NanoTimeBuiltin(), "nanoTime");
         registerBuiltin(allFunctions, new EvalBuiltin(allFunctions), "eval");
+        registerBuiltin(allFunctions, new DefineFunctionBuiltin(allFunctions), "defineFunction");
     }
 
     private static void registerBuiltin(Map<String, RootCallTarget> allFunctions, ToyAbstractFunctionBody builtin, String functionName) {
