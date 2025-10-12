@@ -5,8 +5,10 @@ import nl.tue.vmcourse.toy.lang.FrameDescriptor;
 import nl.tue.vmcourse.toy.lang.RootCallTarget;
 import nl.tue.vmcourse.toy.builtins.ArrayGetSizeBuiltin;
 import nl.tue.vmcourse.toy.builtins.DefineFunctionBuiltin;
+import nl.tue.vmcourse.toy.builtins.DeletePropertyBuiltin;
 import nl.tue.vmcourse.toy.builtins.EvalBuiltin;
 import nl.tue.vmcourse.toy.builtins.GetSizeBuiltin;
+import nl.tue.vmcourse.toy.builtins.HasPropertyBuiltin;
 import nl.tue.vmcourse.toy.builtins.HasSizeBuiltin;
 import nl.tue.vmcourse.toy.builtins.HelloEqualsWorldBuiltin;
 import nl.tue.vmcourse.toy.builtins.IsInstanceBuiltin;
@@ -127,6 +129,8 @@ public class ToyLauncher {
         registerBuiltin(allFunctions, new DefineFunctionBuiltin(allFunctions), "defineFunction");
         registerBuiltin(allFunctions, new SubStringBuiltin(), "subString");
         registerBuiltin(allFunctions, new StringSplitBuiltin(), "stringSplit");
+        registerBuiltin(allFunctions, new DeletePropertyBuiltin(), "deleteProperty");
+        registerBuiltin(allFunctions, new HasPropertyBuiltin(), "hasProperty");
     }
 
     private static void registerBuiltin(Map<String, RootCallTarget> allFunctions, ToyAbstractFunctionBody builtin, String functionName) {

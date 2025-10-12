@@ -17,4 +17,8 @@ public class ToyObject {
     public int getSize() {
         return this.storage.size();
     }
+
+    public void deleteProperty(String property) {
+        storage.remove(property);
+    }
 }
