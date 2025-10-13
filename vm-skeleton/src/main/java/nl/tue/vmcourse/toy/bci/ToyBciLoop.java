@@ -138,10 +138,20 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                     Object left = programStack.pop();
 
                     if(left instanceof Long && right instanceof Long) {
-                        long result = (Long)left + (Long)right;
-                        program.code[pc - 1] = Opcode.ADD_I.code;
-                        programStack.push(result);
-                    } else if(left instanceof String && right instanceof String) {
+                        try {
+                            long res = Math.addExact((long)left, (long)right);
+                            programStack.push(res);
+                        } catch(ArithmeticException e) {
+                            BigInteger res = BigInteger.valueOf((Long)left).add(BigInteger.valueOf((Long)right));
+                            programStack.push(res);
+                        }
+                    } else if((left instanceof BigInteger || left instanceof Long) && (right instanceof BigInteger || right instanceof Long)) {
+                        BigInteger a = (left instanceof BigInteger) ? (BigInteger)left : BigInteger.valueOf((Long)left);
+                        BigInteger b = (right instanceof BigInteger) ? (BigInteger)right : BigInteger.valueOf((Long)right);
+
+                        programStack.push(a.add(b));
+                    }
+                     else if(left instanceof String && right instanceof String) {
                         String result = (String)left + (String) right;
                         programStack.push(result);
                     } else {
@@ -167,7 +177,7 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                 case MUL -> {
                     Object right = programStack.pop();
                     Object left = programStack.pop();
-                    
+
                     if(left instanceof Long && right instanceof Long) {
                         try {
                             Long res = Math.multiplyExact((Long)left, (Long)right);
@@ -176,10 +186,14 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                             BigInteger res = BigInteger.valueOf((Long)left).multiply(BigInteger.valueOf((Long)right));
                             programStack.push(res);
                         }
+                    } else if((left instanceof BigInteger || left instanceof Long) && (right instanceof BigInteger || right instanceof Long)) {
+                        BigInteger a = (left instanceof BigInteger) ? (BigInteger)left : BigInteger.valueOf((Long)left);
+                        BigInteger b = (right instanceof BigInteger) ? (BigInteger)right : BigInteger.valueOf((Long)right);
+
+                        programStack.push(a.multiply(b));
                     } else {
-                        throw new RuntimeException("TODO");
+                        throw new RuntimeException("Value types not compatible for comparison");
                     }
-                    
                     break;
                 }
                 case SUB -> {
@@ -188,24 +202,31 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                     
                     if(left instanceof Long && right instanceof Long) {
                         programStack.push((Long)left - (Long)right); 
-                    } else {
-                        throw new RuntimeException();
-                    }
+                    }  else if((left instanceof BigInteger || left instanceof Long) && (right instanceof BigInteger || right instanceof Long)) {
+                        BigInteger a = (left instanceof BigInteger) ? (BigInteger)left : BigInteger.valueOf((Long)left);
+                        BigInteger b = (right instanceof BigInteger) ? (BigInteger)right : BigInteger.valueOf((Long)right);
 
+                        programStack.push(a.subtract(b));
+                    } else {
+                        throw new RuntimeException("Value types not compatible for comparison");
+                    }
                     break;
                 }
                 case DIV -> {
                     Object right = programStack.pop();
                     Object left = programStack.pop();
                     
-                    boolean checkLeft = (left instanceof Long);
-                    boolean checkRight = (right instanceof Long);
-                    if(!checkLeft || !checkRight) {
-                        throw new RuntimeException();
+                    if(left instanceof Long && right instanceof Long) {
+                        programStack.push((Long)left / (Long)right); 
+                    }  else if((left instanceof BigInteger || left instanceof Long) && (right instanceof BigInteger || right instanceof Long)) {
+                        BigInteger a = (left instanceof BigInteger) ? (BigInteger)left : BigInteger.valueOf((Long)left);
+                        BigInteger b = (right instanceof BigInteger) ? (BigInteger)right : BigInteger.valueOf((Long)right);
+
+                        programStack.push(a.divide(b));
+                    } else {
+                        throw new RuntimeException("Value types not compatible for comparison");
                     }
 
-                    Long result = (Long)left / (Long)right;
-                    programStack.push(result);
                     break;
                 }
                 case JMP -> {
