@@ -11,7 +11,7 @@ public class DeletePropertyBuiltin extends ToyAbstractFunctionBody {
         String property = (String)p;
 
         obj.deleteProperty(property);
-        return null;
+        return true;
     }
 
     @Override
