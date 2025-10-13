@@ -270,7 +270,13 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                         break;
                     }
 
-                    programStack.push((left.toString()).equals(right.toString()));
+                    if(left instanceof ToyObject || right instanceof ToyObject) {
+                        programStack.push(left.equals(right));
+                    } else {
+                        programStack.push((left.toString()).equals(right.toString()));
+                    }
+
+
                     break;
                 }
                 case LOAD_ARG -> {
@@ -423,7 +429,7 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
         if(left instanceof String || right instanceof String) {
             return String.valueOf(left) + String.valueOf(right);
         }
-        
+
         throw new RuntimeException("TODO");
     }
 }

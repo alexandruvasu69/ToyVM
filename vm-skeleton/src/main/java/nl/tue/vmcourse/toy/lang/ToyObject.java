@@ -21,4 +21,13 @@ public class ToyObject {
     public void deleteProperty(String property) {
         storage.remove(property);
     }
+
+    @Override
+    public String toString() {
+        if(storage.isEmpty()) {
+            return "Object";
+        } else {
+            return "[foreign object]";
+        }
+    }
 }
