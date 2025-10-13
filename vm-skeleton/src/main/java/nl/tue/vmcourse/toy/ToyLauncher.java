@@ -105,6 +105,8 @@ public class ToyLauncher {
             System.out.println(result);
         } catch (ToySyntaxErrorException e) {
             System.err.println(e.getMessage());
+            System.exit(1);
         }
+        System.exit(0);
     }
 }
