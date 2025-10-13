@@ -53,8 +53,8 @@ if [ -e "$JAVA_HOME/bin/java" ]; then
             PROGRAM_ARGS+=("$opt") ;;
       esac
     done
-    
-    "$JAVA_HOME/bin/java" "${JAVA_ARGS[@]}" -jar "${DIR}/target/vm-1.0-SNAPSHOT.jar" "${PROGRAM_ARGS[@]}"
+
+    "$JAVA_HOME/bin/java" "${JAVA_ARGS[@]}" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -jar "${DIR}/target/vm-1.0-SNAPSHOT.jar" "${PROGRAM_ARGS[@]}"
 
 else
     echo "Cannot find a JVM in your JAVA_HOME"
