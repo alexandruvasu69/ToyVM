@@ -12,6 +12,7 @@ import org.antlr.v4.runtime.misc.Interval;
 
 import nl.tue.vmcourse.toy.interpreter.ToyAbstractFunctionBody;
 import nl.tue.vmcourse.toy.interpreter.ToyNodeFactory;
+import nl.tue.vmcourse.toy.lang.MutableRootCallTarget;
 import nl.tue.vmcourse.toy.lang.RootCallTarget;
 import nl.tue.vmcourse.toy.lang.VirtualFrame;
 import nl.tue.vmcourse.toy.parser.ToyLangLexer;
@@ -43,7 +44,16 @@ public class EvalBuiltin extends ToyAbstractFunctionBody {
         lex.addErrorListener(new ToyLangParser.BailoutErrorListener());
         parser.addErrorListener(new ToyLangParser.BailoutErrorListener());
         parser.toylanguage();
-        allFunctions.putAll(factory.getAllFunctions());
+
+        factory.getAllFunctions().forEach((String k, RootCallTarget f) -> {
+            RootCallTarget r = allFunctions.get(k);
+            if(r != null && r instanceof MutableRootCallTarget) {
+                ((MutableRootCallTarget)r).setRootCallTarget(f);
+            } else {
+                allFunctions.put(k, new MutableRootCallTarget(f));
+            }
+        });
+        
         Map<String, RootCallTarget> innerAllFunctions = factory.getAllFunctions();
         innerAllFunctions.putAll(allFunctions);
 

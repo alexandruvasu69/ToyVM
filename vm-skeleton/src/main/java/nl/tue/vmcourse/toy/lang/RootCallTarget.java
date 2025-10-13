@@ -4,14 +4,12 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 import nl.tue.vmcourse.toy.interpreter.ToyRootNode;
 
 public class RootCallTarget {
     private final ToyRootNode rootNode;
-    private static Deque<CallFrame> CALL_STACK = new ArrayDeque<>();
+    protected static Deque<CallFrame> CALL_STACK = new ArrayDeque<>();
 
     public RootCallTarget(ToyRootNode rootNode) {
         this.rootNode = rootNode;
