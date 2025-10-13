@@ -10,4 +10,9 @@ public enum NullValue {
     public static Object boxValue(Object object) {
         return (object == null) ? INSTANCE : object;
     }
+
+    @Override
+    public String toString() {
+        return "NULL";
+    }
 }

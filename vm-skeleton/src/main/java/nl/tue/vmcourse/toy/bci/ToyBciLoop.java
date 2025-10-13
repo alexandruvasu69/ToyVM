@@ -150,8 +150,7 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                         BigInteger b = (right instanceof BigInteger) ? (BigInteger)right : BigInteger.valueOf((Long)right);
 
                         programStack.push(a.add(b));
-                    }
-                     else if(left instanceof String && right instanceof String) {
+                    } else if(left instanceof String && right instanceof String) {
                         String result = (String)left + (String) right;
                         programStack.push(result);
                     } else {
@@ -423,8 +422,8 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
     private Object addGeneric(Object left, Object right) {
         if(left instanceof String || right instanceof String) {
             return String.valueOf(left) + String.valueOf(right);
-        } 
-
+        }
+        
         throw new RuntimeException("TODO");
     }
 }
