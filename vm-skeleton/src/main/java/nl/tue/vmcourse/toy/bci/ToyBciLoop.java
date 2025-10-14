@@ -16,7 +16,12 @@ import nl.tue.vmcourse.toy.lang.FrameDescriptor;
 import nl.tue.vmcourse.toy.lang.NullValue;
 import nl.tue.vmcourse.toy.lang.RootCallTarget;
 import nl.tue.vmcourse.toy.lang.ToyObject;
+import nl.tue.vmcourse.toy.lang.UndefinedValue;
 import nl.tue.vmcourse.toy.lang.VirtualFrame;
+import nl.tue.vmcourse.toy.lang.exceptions.ToyException;
+import nl.tue.vmcourse.toy.lang.exceptions.ToyOperationNotDefinedExceptions;
+import nl.tue.vmcourse.toy.lang.exceptions.ToyTypeException;
+import nl.tue.vmcourse.toy.lang.exceptions.ToyUndefinedPropertyException;
 import nl.tue.vmcourse.toy.jit.JITCompiler;
 
 public class ToyBciLoop extends ToyAbstractFunctionBody {
@@ -91,7 +96,7 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                         RootCallTarget function = allFunctions.get(functionName);
                         programStack.push(function);
                     } catch(NullPointerException e) {
-                        programStack.push(NullValue.INSTANCE);
+                        programStack.push(new UndefinedValue(functionName));
                     }
                     pc+=4;
                     break;
@@ -103,7 +108,8 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                         args[i] = programStack.pop();
                     }
                     try {
-                        RootCallTarget function = (RootCallTarget)programStack.pop();
+                        RootCallTarget function = (RootCallTarget)programStack.peek();
+                        programStack.pop();
                         Object returned = function.invoke(args);
                         programStack.push(NullValue.boxValue(returned));
 
@@ -117,6 +123,8 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                         }
                     } catch(NullPointerException exception) {
                         throw new RuntimeException("Nu such function: ");
+                    } catch(ClassCastException e) {
+                        throw new RuntimeException("Undefined function: " + programStack.pop());
                     }
 
                     pc+=4;
@@ -199,31 +207,39 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                     Object right = programStack.pop();
                     Object left = programStack.pop();
                     
-                    if(left instanceof Long && right instanceof Long) {
-                        programStack.push((Long)left - (Long)right); 
-                    }  else if((left instanceof BigInteger || left instanceof Long) && (right instanceof BigInteger || right instanceof Long)) {
-                        BigInteger a = (left instanceof BigInteger) ? (BigInteger)left : BigInteger.valueOf((Long)left);
-                        BigInteger b = (right instanceof BigInteger) ? (BigInteger)right : BigInteger.valueOf((Long)right);
+                    try {
+                        if(left instanceof Long && right instanceof Long) {
+                            programStack.push((Long)left - (Long)right); 
+                        }  else if((left instanceof BigInteger || left instanceof Long) && (right instanceof BigInteger || right instanceof Long)) {
+                            BigInteger a = (left instanceof BigInteger) ? (BigInteger)left : BigInteger.valueOf((Long)left);
+                            BigInteger b = (right instanceof BigInteger) ? (BigInteger)right : BigInteger.valueOf((Long)right);
 
-                        programStack.push(a.subtract(b));
-                    } else {
-                        throw new RuntimeException("Value types not compatible for comparison");
+                            programStack.push(a.subtract(b));
+                        } else {
+                            throw new RuntimeException("Value types not compatible for comparison");
+                        }
+                        break;
+                    } catch(Exception e) {
+                        throw ToyOperationNotDefinedExceptions.throwException("-", left, right);
                     }
-                    break;
                 }
                 case DIV -> {
                     Object right = programStack.pop();
                     Object left = programStack.pop();
                     
-                    if(left instanceof Long && right instanceof Long) {
-                        programStack.push((Long)left / (Long)right); 
-                    }  else if((left instanceof BigInteger || left instanceof Long) && (right instanceof BigInteger || right instanceof Long)) {
-                        BigInteger a = (left instanceof BigInteger) ? (BigInteger)left : BigInteger.valueOf((Long)left);
-                        BigInteger b = (right instanceof BigInteger) ? (BigInteger)right : BigInteger.valueOf((Long)right);
+                    try {
+                        if(left instanceof Long && right instanceof Long) {
+                            programStack.push((Long)left / (Long)right); 
+                        }  else if((left instanceof BigInteger || left instanceof Long) && (right instanceof BigInteger || right instanceof Long)) {
+                            BigInteger a = (left instanceof BigInteger) ? (BigInteger)left : BigInteger.valueOf((Long)left);
+                            BigInteger b = (right instanceof BigInteger) ? (BigInteger)right : BigInteger.valueOf((Long)right);
 
-                        programStack.push(a.divide(b));
-                    } else {
-                        throw new RuntimeException("Value types not compatible for comparison");
+                            programStack.push(a.divide(b));
+                        } else {
+                            throw new RuntimeException("Value types not compatible for division");
+                        }
+                    } catch(Exception e) {
+                        throw new ToyException("Runtime error on \"/\": Division by zero");
                     }
 
                     break;
@@ -237,7 +253,7 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                     Object condition = programStack.pop();
                     boolean checkCondition = condition instanceof Boolean;
                     if(!checkCondition) {
-                        throw new RuntimeException();
+                        throw new ToyTypeException("operation \"if\" not defined for " + condition.getClass().getSimpleName() + " \"" + condition + "\"");
                     }
                     int jumpCounter = readInt(program.code, pc);
                     if(!((boolean)condition)) {
@@ -258,6 +274,48 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                         pc += jumpCounter + 4;
                     } else {
                         pc += 4;
+                    }
+                    break;
+                }
+                case AND_CHECK_LEFT -> {
+                    Object operand = programStack.peek();
+                    if(!(operand instanceof Boolean)) {
+                        throw ToyOperationNotDefinedExceptions.throwException("&&", operand, ToyOperationNotDefinedExceptions.AnyValue.INSTANCE);
+                    }
+                    break;
+                }
+                case AND_CHECK_RIGHT -> {
+                    Object operand = programStack.peek();
+                    if(!(operand instanceof Boolean)) {
+                        throw ToyOperationNotDefinedExceptions.throwException("&&", Boolean.TRUE, operand);
+                    }
+                    break;
+                }
+                case OR_CHECK_LEFT -> {
+                    Object operand = programStack.peek();
+                    if(!(operand instanceof Boolean)) {
+                        throw ToyOperationNotDefinedExceptions.throwException("||", operand, ToyOperationNotDefinedExceptions.AnyValue.INSTANCE);
+                    }
+                    break;
+                }
+                case OR_CHECK_RIGHT -> {
+                    Object operand = programStack.peek();
+                    if(!(operand instanceof Boolean)) {
+                        throw ToyOperationNotDefinedExceptions.throwException("||", Boolean.FALSE, operand);
+                    }
+                    break;
+                }
+                case IF_CHECK -> {
+                    Object operand = programStack.peek();
+                    if(!(operand instanceof Boolean)) {
+                        throw ToyOperationNotDefinedExceptions.throwException("if", operand);
+                    }
+                    break;
+                }
+                case WHILE_CHECK -> {
+                    Object operand = programStack.peek();
+                    if(!(operand instanceof Boolean)) {
+                        throw ToyOperationNotDefinedExceptions.throwException("while", operand);
                     }
                     break;
                 }
@@ -333,20 +391,23 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                         break;
                     }
                     
-                    throw new RuntimeException("Unary min only works on long values");
+                    throw new ToyException("Runtime error on \"-\": Unary operation only defined for numbers");
                 }
                 case WRITE -> {
                     // int objIndex = readInt(program.code, pc);
                     // pc += 4;
                     // ToyObject obj = (ToyObject)locals[objIndex];
                     Object value = programStack.pop();
+                    Object key = programStack.pop();
                     try {
-                        String key = programStack.pop().toString();
+                        String k = key.toString();
                         ToyObject obj = (ToyObject)programStack.pop();
-                        obj.setProperty(key, value);
+                        obj.setProperty(k, value);
                         programStack.push(obj);
                     } catch(NullPointerException e) {
-                        throw new RuntimeException("TODO");
+                        throw new ToyUndefinedPropertyException(key);
+                    } catch(ClassCastException e) {
+                        throw new ToyUndefinedPropertyException(key);
                     }
 
                     break;
@@ -360,8 +421,10 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                         ToyObject obj = (ToyObject)programStack.pop();
                         Object value = obj.getValue(property.toString());
                         programStack.push(value);
+                    } catch(ClassCastException e) {
+                        throw new ToyUndefinedPropertyException(property);
                     } catch(NullPointerException e) {
-                        throw new RuntimeException("Undefined property: " + property);
+                        throw new ToyUndefinedPropertyException(property);
                     }
 
                     break;
@@ -380,7 +443,7 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
 
                         programStack.push((a.compareTo(b) < 0) ? true : false);
                     } else {
-                        throw new RuntimeException("Value types not compatible for comparison");
+                        throw ToyOperationNotDefinedExceptions.throwException("<", left, right);
                     }
                     
                     break;
@@ -397,7 +460,7 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
 
                         programStack.push((a.compareTo(b) <= 0) ? true : false);
                     } else {
-                        throw new RuntimeException("Value types not compatible for comparison");
+                        throw ToyOperationNotDefinedExceptions.throwException("<=", left, right);
                     }
 
                     break;
@@ -414,9 +477,8 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
                 default -> throw new RuntimeException("PC: " + pc);
             }
         }} catch(Exception e) {
-            System.err.println("FUNCTION: " + cf.functionName);
-            System.err.println("PC: " + pc + ", EX: " + executions);
-            System.err.println(e);
+            System.err.println(e.getMessage());
+            System.exit(1);
         }
         return null;
     }
@@ -428,8 +490,9 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
     private Object addGeneric(Object left, Object right) {
         if(left instanceof String || right instanceof String) {
             return String.valueOf(left) + String.valueOf(right);
+        } else {
+            throw ToyOperationNotDefinedExceptions.throwException("+", left, right);
         }
-
-        throw new RuntimeException("TODO");
+        
     }
 }

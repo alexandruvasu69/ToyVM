@@ -8,10 +8,11 @@ import nl.tue.vmcourse.toy.lang.RootCallTarget;
 import nl.tue.vmcourse.toy.lang.ToyObject;
 import nl.tue.vmcourse.toy.lang.ToyType;
 import nl.tue.vmcourse.toy.lang.ToyTypeWrapper;
+import nl.tue.vmcourse.toy.lang.UndefinedValue;
 import nl.tue.vmcourse.toy.lang.VirtualFrame;
 
 public class TypeOfBuiltin extends ToyAbstractFunctionBody {
-    public Object invoke(Object object) {
+    public ToyType invoke(Object object) {
         if(object instanceof Long || object instanceof BigInteger) {
             return ToyType.NUMBER;
         } else if(object instanceof String) {
@@ -24,11 +25,11 @@ public class TypeOfBuiltin extends ToyAbstractFunctionBody {
             return ToyType.NULL;
         } else if(object instanceof RootCallTarget) {
             return ToyType.FUNCTION;
-        } else if(object instanceof ToyType) {
+        } else if(object instanceof UndefinedValue) {
+            return ToyType.NULL;
+        } else {
             return new ToyTypeWrapper((ToyType)object);
         }
-
-        return "unknown";
     }
 
     @Override

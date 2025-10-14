@@ -19,6 +19,10 @@ public class StringSplitBuiltin extends ToyAbstractFunctionBody {
     @Override
     public Object execute(VirtualFrame frame) {
         Object[] args = frame.getArguments();
+        if(!(args[0] instanceof String)) {
+            throw new RuntimeException("Not a string: cannot substring");
+        }
+
         return this.invoke(args[0]);
     }
     

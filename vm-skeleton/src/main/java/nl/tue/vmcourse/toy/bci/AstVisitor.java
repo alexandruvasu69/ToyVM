@@ -136,6 +136,7 @@ public class AstVisitor implements IAstVisitor {
 
         programBuilder.mark(labelStart);
         node.getConditionNode().accept(this);
+        programBuilder.emit(Opcode.WHILE_CHECK);
         programBuilder.emitJump(Opcode.JZ, labelEnd);
         node.getBodyNode().accept(this);
         programBuilder.emitJump(Opcode.JMP, labelStart);
@@ -179,9 +180,11 @@ public class AstVisitor implements IAstVisitor {
         Label labelEnd = programBuilder.newLabel();
 
         node.getLeftUnboxed().accept(this);
+        programBuilder.emit(Opcode.OR_CHECK_LEFT);
         programBuilder.emitJump(Opcode.JNZ, labelTrue);
 
         node.getRightUnboxed().accept(this);
+        programBuilder.emit(Opcode.OR_CHECK_RIGHT);
         programBuilder.emitJump(Opcode.JNZ, labelTrue);
 
         int index = programBuilder.addConst(false);
@@ -204,9 +207,11 @@ public class AstVisitor implements IAstVisitor {
         Label labelEnd = programBuilder.newLabel();
         
         node.getLeftUnboxed().accept(this);
+        programBuilder.emit(Opcode.AND_CHECK_LEFT);
         programBuilder.emitJump(Opcode.JZ, labelFalse);
 
         node.getRightUnboxed().accept(this);
+        programBuilder.emit(Opcode.AND_CHECK_RIGHT);
         programBuilder.emitJump(Opcode.JZ, labelFalse);
 
         int index = programBuilder.addConst(true);
@@ -249,6 +254,7 @@ public class AstVisitor implements IAstVisitor {
         node.getConditionNode().accept(this);
         Label labelElse = programBuilder.newLabel();
         Label labelEnd = programBuilder.newLabel();
+        programBuilder.emit(Opcode.IF_CHECK);
         programBuilder.emitJump(Opcode.JZ, labelElse);
         node.getThenPartNode().accept(this);
         

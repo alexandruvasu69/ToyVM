@@ -29,6 +29,12 @@ public enum Opcode {
     JMP(0x40, OperandKind.INT32),
     JZ(0x41, OperandKind.INT32),
     JNZ(0x42, OperandKind.INT32),
+    AND_CHECK_LEFT(0x43),
+    AND_CHECK_RIGHT(0x44),
+    OR_CHECK_LEFT(0x45),
+    OR_CHECK_RIGHT(0x46),
+    IF_CHECK(0x47),
+    WHILE_CHECK(0x48),
 
     CALL(0x50, OperandKind.INT32, OperandKind.INT32),
     RET(0x51, OperandKind.INT32),

@@ -3,6 +3,7 @@ package nl.tue.vmcourse.toy;
 import nl.tue.vmcourse.toy.interpreter.ToySyntaxErrorException;
 import nl.tue.vmcourse.toy.lang.FrameDescriptor;
 import nl.tue.vmcourse.toy.lang.RootCallTarget;
+import nl.tue.vmcourse.toy.lang.exceptions.ToyTypeException;
 import nl.tue.vmcourse.toy.builtins.ArrayGetSizeBuiltin;
 import nl.tue.vmcourse.toy.builtins.DefineFunctionBuiltin;
 import nl.tue.vmcourse.toy.builtins.DeletePropertyBuiltin;
@@ -151,6 +152,7 @@ public class ToyLauncher {
             if(result != null) {
                 System.out.println(result);
             }
+            System.exit(0);
         } catch (ToySyntaxErrorException e) {
             System.err.println(e.getMessage());
             System.exit(1);
