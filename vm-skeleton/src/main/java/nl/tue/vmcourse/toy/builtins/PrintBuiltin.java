@@ -4,6 +4,7 @@ import nl.tue.vmcourse.toy.interpreter.ToyAbstractFunctionBody;
 import nl.tue.vmcourse.toy.lang.NullValue;
 import nl.tue.vmcourse.toy.lang.UndefinedValue;
 import nl.tue.vmcourse.toy.lang.VirtualFrame;
+import nl.tue.vmcourse.toy.strings.Rope;
 
 public class PrintBuiltin extends ToyAbstractFunctionBody {
     public Object invoke(String foo) {

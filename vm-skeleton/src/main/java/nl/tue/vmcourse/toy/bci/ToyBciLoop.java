@@ -22,6 +22,8 @@ import nl.tue.vmcourse.toy.lang.exceptions.ToyException;
 import nl.tue.vmcourse.toy.lang.exceptions.ToyOperationNotDefinedExceptions;
 import nl.tue.vmcourse.toy.lang.exceptions.ToyTypeException;
 import nl.tue.vmcourse.toy.lang.exceptions.ToyUndefinedPropertyException;
+import nl.tue.vmcourse.toy.strings.LeafRope;
+import nl.tue.vmcourse.toy.strings.Rope;
 import nl.tue.vmcourse.toy.jit.JITCompiler;
 
 public class ToyBciLoop extends ToyAbstractFunctionBody {
@@ -490,6 +492,11 @@ public class ToyBciLoop extends ToyAbstractFunctionBody {
     private Object addGeneric(Object left, Object right) {
         if(left instanceof String || right instanceof String) {
             return String.valueOf(left) + String.valueOf(right);
+        } else if (left instanceof Rope || right instanceof Rope) {
+            Rope a = (left instanceof Rope) ? (Rope)left : new LeafRope(String.valueOf(left));
+            Rope b = (right instanceof Rope) ? (Rope)right : new LeafRope(String.valueOf(right));
+
+            return a.concat(b);
         } else {
             throw ToyOperationNotDefinedExceptions.throwException("+", left, right);
         }

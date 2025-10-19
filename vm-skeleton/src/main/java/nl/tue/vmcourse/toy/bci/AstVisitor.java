@@ -3,6 +3,7 @@ package nl.tue.vmcourse.toy.bci;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import nl.tue.vmcourse.toy.ToyLauncher;
 import nl.tue.vmcourse.toy.ast.ToyAddNode;
 import nl.tue.vmcourse.toy.ast.ToyAstNode;
 import nl.tue.vmcourse.toy.ast.ToyBigIntegerLiteralNode;
@@ -36,6 +37,7 @@ import nl.tue.vmcourse.toy.ast.ToyUnboxNode;
 import nl.tue.vmcourse.toy.ast.ToyWhileNode;
 import nl.tue.vmcourse.toy.ast.ToyWriteLocalVariableNode;
 import nl.tue.vmcourse.toy.ast.ToyWritePropertyNode;
+import nl.tue.vmcourse.toy.strings.LeafRope;
 
 public class AstVisitor implements IAstVisitor {
     private ProgramBuilder programBuilder = new ProgramBuilder();
@@ -121,7 +123,12 @@ public class AstVisitor implements IAstVisitor {
 
     @Override
     public void visit(ToyStringLiteralNode node) {
-        int index = programBuilder.addConst(node.getValue());
+        int index;
+        if(ToyLauncher.ROPES_ENABLED) {
+            index = programBuilder.addConst(new LeafRope(node.getValue()));
+        } else {
+            index = programBuilder.addConst(node.getValue());
+        }
         programBuilder.emit(Opcode.SCONST);
         programBuilder.emitInt(index);
     }
